@@ -35,6 +35,10 @@
           <span class="nav-icon" aria-hidden="true">▥</span>
           <span>训练数据</span>
         </a>
+        <a class="nav-item" href="#/guide" data-route="guide">
+          <span class="nav-icon" aria-hidden="true">?</span>
+          <span>使用指引</span>
+        </a>
       </nav>
 
       <div class="sidebar-note">
@@ -420,6 +424,74 @@
               </table>
             </div>
           </section>
+        </section>
+        <section class="page guide-page" id="guidePage" data-page="guide" aria-labelledby="guideHeading">
+          <div class="training-header">
+            <div>
+              <h2 id="guideHeading">使用介绍</h2>
+              <p>先看图，再作答。下面的例图画得比较明显，正式训练时图案会更淡、偏移会更小。</p>
+            </div>
+          </div>
+
+          <section class="panel guide-preparation" aria-labelledby="guidePreparationHeading">
+            <h3 id="guidePreparationHeading">开始前</h3>
+            <ul>
+              <li>每次训练时尽量用同一块屏幕，保持屏幕尺寸、屏幕亮度、观看距离和室内光线一致。</li>
+              <li>眼睛离屏幕最好在半米以上（不强制），坐稳后尽量保持距离，不要为了看清而往前凑。</li>
+              <li>这四种训练都用双眼看，无需遮盖任何一只眼。平时戴眼镜的话，训练时也戴着。</li>
+              <li>建议每天训练半个小时以上，无特殊情况使用综合训练即可，最难的是坚持！！！。</li>
+            </ul>
+            <p class="guide-start">选好模式和次数，点“开始本次训练”；进入全屏预备画面后，再按一次鼠标左键开始。每题先看中央圆环，等画面消失、出现“等待作答”后，在训练区域按鼠标左键或右键，不用追着图案点。按 Esc 可结束本次训练。</p>
+          </section>
+
+          <div class="guide-grid">
+            <article class="panel guide-card">
+              <h3><span>01</span>单图训练</h3>
+              <p>先后闪过两帧，只有一帧有条纹图案。记住它出现在第几帧。</p>
+              <div class="guide-examples">
+                <figure><canvas width="400" height="280" data-guide-example="single-target" role="img" aria-label="第一帧：中央有一个条纹图案"></canvas><figcaption>第一帧：有图案</figcaption></figure>
+                <figure><canvas width="400" height="280" data-guide-example="single-blank" role="img" aria-label="第二帧：空白灰色背景"></canvas><figcaption>第二帧：没有图案</figcaption></figure>
+              </div>
+              <p class="guide-answer"><strong>第一帧有 → 点击鼠标左键　第二帧有 → 点击鼠标右键</strong></p>
+              <p class="guide-example-note">上图这个例子，按左键。</p>
+            </article>
+
+            <article class="panel guide-card">
+              <h3><span>02</span>三图训练</h3>
+              <p>两帧都有两侧的图案，只有一帧中间多出一个较淡的图案。看中间有没有，找出有三个图案的那一帧。</p>
+              <div class="guide-examples">
+                <figure><canvas width="400" height="280" data-guide-example="triple-empty" role="img" aria-label="第一帧：只有左右两个图案，中间空白"></canvas><figcaption>第一帧：中间没有</figcaption></figure>
+                <figure><canvas width="400" height="280" data-guide-example="triple-target" role="img" aria-label="第二帧：左右图案之间多出一个较淡的图案"></canvas><figcaption>第二帧：中间有图案</figcaption></figure>
+              </div>
+              <p class="guide-answer"><strong>第一帧有三个 → 点击鼠标左键　第二帧有三个 → 点击鼠标右键</strong></p>
+              <p class="guide-example-note">上图这个例子，按右键。图案也可能竖着排列，判断方法一样。</p>
+            </article>
+
+            <article class="panel guide-card">
+              <h3><span>03</span>清晰图训练</h3>
+              <p>两帧各有一个图案。比较哪一帧的条纹更明显、黑白反差更大，选更清晰的那一帧。</p>
+              <div class="guide-examples">
+                <figure><canvas width="400" height="280" data-guide-example="darker-faint" role="img" aria-label="第一帧：较淡、对比度较低的条纹图案"></canvas><figcaption>第一帧：较淡</figcaption></figure>
+                <figure><canvas width="400" height="280" data-guide-example="darker-clear" role="img" aria-label="第二帧：条纹更明显、对比度更高的图案"></canvas><figcaption>第二帧：更清晰</figcaption></figure>
+              </div>
+              <p class="guide-answer"><strong>第一帧更清晰 → 点击鼠标左键　第二帧更清晰 → 点击鼠标右键</strong></p>
+              <p class="guide-example-note">上图这个例子，按右键。前面三种模式都是先后显示两帧，这里并排放只是为了方便对照。</p>
+            </article>
+
+            <article class="panel guide-card">
+              <h3><span>04</span>移图训练</h3>
+              <p>只闪过一幅图，里面有三个图案。以两端的图案为参照，看中间那个往哪边偏。</p>
+              <div class="guide-examples">
+                <figure><canvas width="400" height="320" data-guide-example="up" role="img" aria-label="横排三个图案，中间图案向上偏移，应按鼠标左键"></canvas><figcaption>横排，中间偏上 → 点击鼠标左键</figcaption></figure>
+                <figure><canvas width="400" height="320" data-guide-example="down" role="img" aria-label="横排三个图案，中间图案向下偏移，应按鼠标右键"></canvas><figcaption>横排，中间偏下 → 点击鼠标右键</figcaption></figure>
+                <figure><canvas width="400" height="320" data-guide-example="left" role="img" aria-label="竖排三个图案，中间图案向左偏移，应按鼠标左键"></canvas><figcaption>竖排，中间偏左 → 点击鼠标左键</figcaption></figure>
+                <figure><canvas width="400" height="320" data-guide-example="right" role="img" aria-label="竖排三个图案，中间图案向右偏移，应按鼠标右键"></canvas><figcaption>竖排，中间偏右 → 点击鼠标右键</figcaption></figure>
+              </div>
+              <p class="guide-answer"><strong>偏上 / 偏左 → 左键　偏下 / 偏右 → 点击鼠标右键</strong></p>
+              <p class="guide-example-note">每题可能换排列方向，作答时也可以看画面下方的提示。</p>
+            </article>
+          </div>
+          <p class="guide-footer">想先熟悉操作，可以选一个单项，再选“体验模式”。综合训练会按上面的顺序，把四种模式各做一轮。</p>
         </section>
       </main>
     </div>

@@ -2,11 +2,13 @@ import { openDatabase } from "./db.js";
 import { RecordsController } from "./records.js";
 import { TrainingController } from "./training.js";
 import { VisualTestController } from "./visual-test.js";
+import { drawGuideExamples } from "./guide.js";
 
 const PAGE_META = {
   training: { title: "视觉训练", eyebrow: "TRAINING CENTER" },
   testing: { title: "视觉测试", eyebrow: "LANDOLT C ASSESSMENT" },
   records: { title: "训练数据", eyebrow: "LOCAL DATA CENTER" },
+  guide: { title: "使用指引", eyebrow: "TRAINING GUIDE" },
 };
 
 function toast(message, type = "default") {
@@ -85,6 +87,7 @@ window.addEventListener("beforeunload", (event) => {
 
 async function initialize() {
   setCurrentDate();
+  drawGuideExamples();
   try { await openDatabase(); } catch (error) { toast(`IndexedDB 初始化失败：${error.message}`, "error"); }
   if (!location.hash) location.replace("#/training");
   await route();
