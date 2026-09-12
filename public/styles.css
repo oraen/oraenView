@@ -29,6 +29,38 @@ button, a { -webkit-tap-highlight-color: transparent; }
 button { color: inherit; }
 a { color: inherit; text-decoration: none; }
 .hidden { display: none !important; }
+.agreement-dialog [hidden] { display: none !important; }
+body.agreement-open { overflow: hidden; }
+.agreement-dialog { position: fixed; inset: 0; width: min(620px, calc(100% - 32px)); max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 1px solid var(--line); border-radius: 16px; color: var(--ink); background: #fff; box-shadow: 0 24px 80px #17203b33; }
+.agreement-dialog[open] { display: flex; flex-direction: column; }
+.agreement-dialog::backdrop { background: #111c4470; }
+.agreement-heading { padding: 24px 28px 18px; border-bottom: 1px solid var(--line); }
+.agreement-heading h2 { margin: 0 0 8px; font-size: 23px; }
+.agreement-heading p { margin: 0 0 8px; color: #56647f; font-size: 14px; line-height: 1.7; }
+.agreement-heading small { color: #71809f; font-size: 11px; }
+.agreement-text { min-height: 0; padding: 20px 28px 8px; overflow-y: auto; overscroll-behavior: contain; }
+.agreement-text h3 { margin: 22px 0 9px; font-size: 16px; }
+.agreement-text p { margin: 0 0 12px; color: #45516a; font-size: 14px; line-height: 1.85; }
+.agreement-text a, .agreement-link { color: #3654a5; text-decoration: underline; text-underline-offset: 3px; }
+.agreement-actions { padding: 18px 28px 22px; border-top: 1px solid var(--line); background: #f8faff; }
+.agreement-heading, .agreement-actions { flex-shrink: 0; }
+.agreement-consent { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.7; cursor: pointer; }
+.agreement-consent input { flex-shrink: 0; width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--primary); }
+#agreementStatus { margin: 8px 0; font-size: 12px; color: #87592a; line-height: 1.6; }
+#agreementStatus:empty { display: none; }
+.agreement-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 15px; }
+.agreement-buttons button { padding: 11px 17px; border: 1px solid #ccd5e6; border-radius: 8px; background: #fff; font-size: 13px; cursor: pointer; }
+.agreement-buttons .agreement-accept { border-color: var(--primary); color: #fff; background: var(--primary); }
+.agreement-buttons button:disabled { opacity: .45; cursor: not-allowed; }
+.agreement-dialog :focus-visible, .agreement-link:focus-visible { outline: 2px solid #4968ff; outline-offset: 3px; }
+.agreement-link { padding: 0; border: 0; background: none; font: inherit; cursor: pointer; }
+@media (max-width: 640px), (max-height: 600px) {
+  .agreement-dialog { width: calc(100% - 16px); max-height: calc(100vh - 16px); max-height: calc(100dvh - 16px); }
+  .agreement-heading { padding: 16px 18px 12px; }
+  .agreement-heading h2 { font-size: 20px; }
+  .agreement-text { padding: 0 18px 12px; }
+  .agreement-actions { padding: 12px 18px; }
+}
 
 .app-shell { min-height: 100vh; display: grid; grid-template-columns: 252px minmax(0, 1fr); }
 .sidebar {
@@ -98,6 +130,20 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 640px) {
   .guide-card, .guide-preparation { padding: 18px; }
   .guide-examples { gap: 8px; }
+}
+.about-page { max-width: 820px; margin: 0 auto; }
+.about-article { padding: 36px 42px 40px; border-radius: 12px; background: #fff; }
+.about-article h2 { margin: 0 0 32px; color: var(--ink); font-size: 28px; font-weight: 650; line-height: 1.5; }
+.about-article > p { margin: 0 0 23px; color: #3d485d; font-size: 16px; line-height: 2; overflow-wrap: anywhere; }
+.about-article a { color: #3654a5; text-decoration: underline; text-underline-offset: 3px; }
+.about-article a:hover { color: #233970; }
+.about-article a:focus-visible { outline: 2px solid #829af0; outline-offset: 4px; }
+.about-signature { margin-top: 32px; color: #59657a; font-size: 14px; }
+.about-signature img { display: block; width: 80px; height: 80px; margin-bottom: 10px; border-radius: 12px; object-fit: contain; }
+@media (max-width: 640px) {
+  .about-article { padding: 24px 20px; }
+  .about-article h2 { margin-bottom: 24px; font-size: 25px; }
+  .about-article > p { font-size: 15px; }
 }
 @keyframes pageIn { from { transform: translateY(5px); } to { transform: translateY(0); } }
 

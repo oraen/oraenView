@@ -3,12 +3,14 @@ import { RecordsController } from "./records.js";
 import { TrainingController } from "./training.js";
 import { VisualTestController } from "./visual-test.js";
 import { drawGuideExamples } from "./guide.js";
+import { requireAgreement, showAgreement } from "./agreement.js";
 
 const PAGE_META = {
   training: { title: "视觉训练", eyebrow: "TRAINING CENTER" },
   testing: { title: "视觉测试", eyebrow: "LANDOLT C ASSESSMENT" },
   records: { title: "训练数据", eyebrow: "LOCAL DATA CENTER" },
   guide: { title: "使用指引", eyebrow: "TRAINING GUIDE" },
+  about: { title: "关于项目", eyebrow: "ABOUT ORAEN VIEW" },
 };
 
 function toast(message, type = "default") {
@@ -20,9 +22,9 @@ function toast(message, type = "default") {
   setTimeout(() => element.remove(), 3400);
 }
 
-const records = new RecordsController({ onToast: toast });
-const training = new TrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
-const visualTest = new VisualTestController({ onToast: toast, onTestChanged: () => records.invalidate() });
+let records;
+let training;
+let visualTest;
 let currentRoute = "training";
 let routeGuardActive = false;
 
@@ -72,25 +74,37 @@ function setCurrentDate() {
   }).format(new Date());
 }
 
-document.querySelector("#menuButton").addEventListener("click", () => document.querySelector("#sidebar").classList.toggle("open"));
-document.addEventListener("click", (event) => {
-  const sidebar = document.querySelector("#sidebar");
-  if (window.innerWidth > 900 || !sidebar.classList.contains("open")) return;
-  if (!event.target.closest("#sidebar") && !event.target.closest("#menuButton")) sidebar.classList.remove("open");
-});
-window.addEventListener("hashchange", route);
-window.addEventListener("beforeunload", (event) => {
-  if (!training.isRunning() && !visualTest.isRunning()) return;
-  event.preventDefault();
-  event.returnValue = "";
-});
+function bindAppEvents() {
+  document.querySelector("#reviewAgreement").addEventListener("click", () => showAgreement({ review: true }));
+  document.querySelector("#menuButton").addEventListener("click", () => document.querySelector("#sidebar").classList.toggle("open"));
+  document.addEventListener("click", (event) => {
+    const sidebar = document.querySelector("#sidebar");
+    if (window.innerWidth > 900 || !sidebar.classList.contains("open")) return;
+    if (!event.target.closest("#sidebar") && !event.target.closest("#menuButton")) sidebar.classList.remove("open");
+  });
+  window.addEventListener("hashchange", route);
+  window.addEventListener("beforeunload", (event) => {
+    if (!training.isRunning() && !visualTest.isRunning()) return;
+    event.preventDefault();
+    event.returnValue = "";
+  });
+}
 
 async function initialize() {
   setCurrentDate();
   drawGuideExamples();
+  const agreement = await requireAgreement();
+  const shell = document.querySelector(".app-shell");
+  shell.inert = false;
+  records = new RecordsController({ onToast: toast });
+  training = new TrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
+  visualTest = new VisualTestController({ onToast: toast, onTestChanged: () => records.invalidate() });
+  bindAppEvents();
+  if (!agreement.persisted) toast("浏览器未能保存同意记录，本次可正常使用，下次打开时需要重新确认。");
   try { await openDatabase(); } catch (error) { toast(`IndexedDB 初始化失败：${error.message}`, "error"); }
   if (!location.hash) location.replace("#/training");
   await route();
+  document.querySelector("#pageTitle").focus();
 }
 
 initialize();

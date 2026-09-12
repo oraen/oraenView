@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "check": "node --check index.js && node --check public/js/app.js && node --check public/js/db.js && node --check public/js/gabor.js && node --check public/js/guide.js && node --check public/js/training.js && node --check public/js/visual-test.js && node --check public/js/records.js && node --check scripts/browser-smoke.js && node --check scripts/experience-smoke.js && node --check scripts/visual-test-smoke.js",
-    "test": "npm run check"
+    "check": "node --check index.js && node --check public/js/app.js && node --check public/js/agreement.js && node --check public/js/db.js && node --check public/js/gabor.js && node --check public/js/guide.js && node --check public/js/training.js && node --check public/js/visual-test.js && node --check public/js/records.js && node --check scripts/browser-smoke.js && node --check scripts/experience-smoke.js && node --check scripts/visual-test-smoke.js",
+    "test": "npm run check && node --test scripts/agreement-test.mjs"
   },
   "private": true
 }
