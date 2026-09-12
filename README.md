@@ -1,5 +1,9 @@
-# Oraen View
 
+![慢手的兔子头像](public/images/author-manshou.jpg)
+小红书：慢手（ID：49624205605）。
+
+
+# Oraen View
 一个基于 Gabor 刺激、视觉知觉学习和自适应阈值测量的浏览器研究原型。
 
 当前包含五个页面：
@@ -63,5 +67,4 @@ IndexedDB 数据库名为 `oraenViewDB`，首次运行会自动迁移旧版本�
 
 当然使用上的疑问可以问作者， [oraen1998@gmail.com](mailto:oraen1998@gmail.com)，小红书：慢手（ID：49624205605）。
 
-![慢手的兔子头像](public/images/author-manshou.jpg)
 <!-- ABOUT_PROJECT_END -->
