@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gabor Generator</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      background: #f3f3f1;
+      color: #202124;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(320px, 420px) 1fr;
+    }
+    aside {
+      padding: 20px;
+      background: #ffffff;
+      border-right: 1px solid #d8d8d4;
+      overflow: auto;
+    }
+    main {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      padding: 28px;
+    }
+    h1 {
+      margin: 0 0 18px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .control {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: #343634;
+    }
+    input[type="range"], select {
+      width: 100%;
+    }
+    select, button {
+      height: 34px;
+      border: 1px solid #b9bbb6;
+      border-radius: 6px;
+      background: #fff;
+      color: #202124;
+    }
+    button {
+      padding: 0 12px;
+      cursor: pointer;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    canvas {
+      width: min(78vw, 820px);
+      height: auto;
+      aspect-ratio: 1.25;
+      background: #9f9f9d;
+      box-shadow: 0 0 0 1px #d5d5d0;
+    }
+    @media (max-width: 760px) {
+      body {
+        grid-template-columns: 1fr;
+      }
+      aside {
+        border-right: 0;
+        border-bottom: 1px solid #d8d8d4;
+      }
+      main {
+        padding: 16px;
+      }
+      canvas {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <h1>Gabor 参数生成器</h1>
+    <div class="control">
+      <label for="mode">模式 <span id="modeValue"></span></label>
+      <select id="mode">
+        <option value="single">单个 Gabor</option>
+        <option value="triple">三联侧向掩蔽</option>
+        <option value="choices">四选一对比度</option>
+      </select>
+    </div>
+    <div class="control">
+      <label for="contrast">目标对比度 <span id="contrastValue"></span></label>
+      <input id="contrast" type="range" min="0.02" max="0.95" step="0.01" value="0.28">
+    </div>
+    <div class="control">
+      <label for="flankerContrast">侧翼对比度 <span id="flankerContrastValue"></span></label>
+      <input id="flankerContrast" type="range" min="0.02" max="0.95" step="0.01" value="0.52">
+    </div>
+    <div class="control">
+      <label for="frequency">空间频率 <span id="frequencyValue"></span></label>
+      <input id="frequency" type="range" min="0.012" max="0.08" step="0.001" value="0.034">
+    </div>
+    <div class="control">
+      <label for="sigma">清晰范围 <span id="sigmaValue"></span></label>
+      <input id="sigma" type="range" min="32" max="130" step="1" value="72">
+    </div>
+    <div class="control">
+      <label for="angle">方向 <span id="angleValue"></span></label>
+      <input id="angle" type="range" min="-90" max="90" step="1" value="0">
+    </div>
+    <div class="control">
+      <label for="spacing">三联间距 <span id="spacingValue"></span></label>
+      <input id="spacing" type="range" min="90" max="260" step="1" value="150">
+    </div>
+    <div class="control">
+      <label for="background">背景灰度 <span id="backgroundValue"></span></label>
+      <input id="background" type="range" min="96" max="190" step="1" value="160">
+    </div>
+    <div class="actions">
+      <button id="downloadPng" type="button">下载 PNG</button>
+      <button id="randomize" type="button">随机相位</button>
+    </div>
+  </aside>
+  <main>
+    <canvas id="canvas" width="1000" height="800"></canvas>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const controls = {
+      mode: document.getElementById("mode"),
+      contrast: document.getElementById("contrast"),
+      flankerContrast: document.getElementById("flankerContrast"),
+      frequency: document.getElementById("frequency"),
+      sigma: document.getElementById("sigma"),
+      angle: document.getElementById("angle"),
+      spacing: document.getElementById("spacing"),
+      background: document.getElementById("background"),
+    };
+    const phaseState = { value: 0 };
+
+    function value(id) {
+      return Number(controls[id].value);
+    }
+
+    function drawGabor(cx, cy, options) {
+      const radius = Math.ceil(options.sigma * 3);
+      const image = ctx.createImageData(radius * 2, radius * 2);
+      const theta = options.angle * Math.PI / 180;
+      const cos = Math.cos(theta);
+      const sin = Math.sin(theta);
+      const bg = options.background;
+
+      for (let py = -radius; py < radius; py++) {
+        for (let px = -radius; px < radius; px++) {
+          const xr = px * cos + py * sin;
+          const envelope = Math.exp(-(px * px + py * py) / (2 * options.sigma * options.sigma));
+          const wave = Math.cos(2 * Math.PI * options.frequency * xr + options.phase);
+          const gray = Math.round(bg + bg * options.contrast * envelope * wave);
+          const clamped = Math.max(0, Math.min(255, gray));
+          const alpha = Math.round(255 * Math.min(1, envelope * 1.5));
+          const index = ((py + radius) * radius * 2 + (px + radius)) * 4;
+          image.data[index] = clamped;
+          image.data[index + 1] = clamped;
+          image.data[index + 2] = clamped;
+          image.data[index + 3] = alpha;
+        }
+      }
+      ctx.putImageData(image, Math.round(cx - radius), Math.round(cy - radius));
+    }
+
+    function draw() {
+      const bg = value("background");
+      ctx.fillStyle = `rgb(${bg}, ${bg}, ${bg})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const base = {
+        background: bg,
+        sigma: value("sigma"),
+        frequency: value("frequency"),
+        angle: value("angle"),
+        phase: phaseState.value,
+      };
+      const mode = controls.mode.value;
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      if (mode === "single") {
+        drawGabor(cx, cy, { ...base, contrast: value("contrast") });
+      } else if (mode === "triple") {
+        const spacing = value("spacing");
+        drawGabor(cx, cy - spacing, { ...base, contrast: value("flankerContrast") });
+        drawGabor(cx, cy, { ...base, contrast: value("contrast") });
+        drawGabor(cx, cy + spacing, { ...base, contrast: value("flankerContrast") });
+      } else {
+        const offsets = [[-210, -150], [210, -150], [-210, 150], [210, 150]];
+        const contrasts = [
+          value("contrast"),
+          value("contrast") * 0.72,
+          value("contrast") * 1.18,
+          value("contrast") * 0.9,
+        ];
+        offsets.forEach(([dx, dy], index) => {
+          drawGabor(cx + dx, cy + dy, {
+            ...base,
+            contrast: Math.max(0.02, Math.min(0.95, contrasts[index])),
+            phase: phaseState.value + index * 0.7,
+          });
+        });
+      }
+      updateLabels();
+    }
+
+    function updateLabels() {
+      document.getElementById("modeValue").textContent = controls.mode.selectedOptions[0].textContent;
+      document.getElementById("contrastValue").textContent = value("contrast").toFixed(2);
+      document.getElementById("flankerContrastValue").textContent = value("flankerContrast").toFixed(2);
+      document.getElementById("frequencyValue").textContent = value("frequency").toFixed(3);
+      document.getElementById("sigmaValue").textContent = String(value("sigma"));
+      document.getElementById("angleValue").textContent = `${value("angle")} deg`;
+      document.getElementById("spacingValue").textContent = String(value("spacing"));
+      document.getElementById("backgroundValue").textContent = String(value("background"));
+    }
+
+    Object.values(controls).forEach((control) => {
+      control.addEventListener("input", draw);
+      control.addEventListener("change", draw);
+    });
+    document.getElementById("randomize").addEventListener("click", () => {
+      phaseState.value = Math.random() * Math.PI * 2;
+      draw();
+    });
+    document.getElementById("downloadPng").addEventListener("click", () => {
+      const a = document.createElement("a");
+      a.download = `gabor-${controls.mode.value}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    });
+    draw();
+  </script>
+</body>
+</html>

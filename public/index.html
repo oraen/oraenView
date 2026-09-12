@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111c44">
+  <meta name="description" content="Oraen View Gabor 视觉知觉训练研究原型">
+  <title>Oraen View 视觉训练平台</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#/training" aria-label="Oraen View 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+        <span>
+          <strong>ORAEN VIEW</strong>
+          <small>VISION STUDIO</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="主导航">
+        <p class="nav-label">训练中心</p>
+        <a class="nav-item" href="#/training" data-route="training">
+          <span class="nav-icon" aria-hidden="true">◉</span>
+          <span>视觉训练</span>
+        </a>
+        <a class="nav-item" href="#/testing" data-route="testing">
+          <span class="nav-icon" aria-hidden="true">◌</span>
+          <span>视觉测试</span>
+        </a>
+        <a class="nav-item" href="#/records" data-route="records">
+          <span class="nav-icon" aria-hidden="true">▥</span>
+          <span>训练数据</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-note">
+        <span class="note-dot"></span>
+        <div>
+          <strong>研究原型</strong>
+          <p>本版本用于训练机制验证，尚未完成医疗级显示校准。</p>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="avatar">OV</div>
+        <div>
+          <strong>本机训练用户</strong>
+          <small>数据仅保存在此浏览器</small>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-column">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuButton" type="button" aria-label="打开导航">☰</button>
+        <div>
+          <p class="eyebrow" id="pageEyebrow">TRAINING CENTER</p>
+          <h1 id="pageTitle">视觉训练</h1>
+        </div>
+        <div class="topbar-actions">
+          <div class="storage-pill" title="所有训练数据都存储在本机 IndexedDB">
+            <span class="pulse-dot"></span>
+            IndexedDB 本地存储
+          </div>
+          <div class="date-chip" id="currentDate"></div>
+        </div>
+      </header>
+
+      <main class="page-container">
+        <section class="page active" id="trainingPage" data-page="training" aria-labelledby="trainingHeading">
+          <div class="training-header">
+            <div>
+              <span class="section-kicker">PERCEPTUAL LEARNING</span>
+              <h2 id="trainingHeading">选择今天的训练任务</h2>
+              <p>四类任务分别测量目标检测、侧向整合、对比辨别与位置辨别能力。</p>
+            </div>
+            <div class="protocol-chip">
+              <span>推荐计划</span>
+              <strong>自适应 · 16 试次</strong>
+            </div>
+          </div>
+
+          <div class="mode-grid" id="modeGrid" role="radiogroup" aria-label="训练模式">
+            <button class="mode-card selected" type="button" data-mode="mixed" role="radio" aria-checked="true">
+              <span class="mode-number">综合</span>
+              <span class="mode-symbol mixed-symbol"><i></i><i></i><i></i><i></i></span>
+              <strong>综合训练</strong>
+              <small>四种任务依次分段进行</small>
+            </button>
+            <button class="mode-card" type="button" data-mode="single" role="radio" aria-checked="false">
+              <span class="mode-number">01</span>
+              <span class="mode-symbol single-symbol"><i></i></span>
+              <strong>单图训练</strong>
+              <small>判断目标出现的帧</small>
+            </button>
+            <button class="mode-card" type="button" data-mode="triple" role="radio" aria-checked="false">
+              <span class="mode-number">02</span>
+              <span class="mode-symbol triple-symbol"><i></i><i></i><i></i></span>
+              <strong>三图训练</strong>
+              <small>寻找共线中间目标</small>
+            </button>
+            <button class="mode-card" type="button" data-mode="darker" role="radio" aria-checked="false">
+              <span class="mode-number">03</span>
+              <span class="mode-symbol darker-symbol"><i></i><i></i></span>
+              <strong>清晰图训练</strong>
+              <small>辨别更清晰的一帧</small>
+            </button>
+            <button class="mode-card" type="button" data-mode="shifted" role="radio" aria-checked="false">
+              <span class="mode-number">04</span>
+              <span class="mode-symbol shifted-symbol"><i></i><i></i><i></i></span>
+              <strong>移图训练</strong>
+              <small>判断中间目标偏移方向</small>
+            </button>
+          </div>
+
+          <div class="training-layout">
+            <section class="panel setup-panel" id="setupPanel">
+              <div class="panel-heading">
+                <div>
+                  <span class="section-kicker">SESSION SETUP</span>
+                  <h3>训练设置</h3>
+                </div>
+                <span class="status-badge ready">准备就绪</span>
+              </div>
+
+              <div class="setup-group session-type-group">
+                <label>运行方式</label>
+                <div class="segmented session-type-switch" id="sessionTypeSwitch">
+                  <button class="active" type="button" data-session-type="training" aria-pressed="true">正式训练</button>
+                  <button type="button" data-session-type="experience" aria-pressed="false" disabled>体验模式</button>
+                </div>
+                <p class="field-help" id="sessionTypeHelp">体验模式仅用于四个单项训练，不改变累计难度和正式训练统计。</p>
+              </div>
+
+              <div class="setup-group" id="trainingLengthGroup">
+                <label for="trialCount">训练长度 <span id="trialCountValue">每种 16 次 · 共 64 次</span></label>
+                <input id="trialCount" type="range" min="8" max="96" step="4" value="16">
+                <div class="range-labels"><span>最少 8 次</span><span>最多 96 次</span></div>
+              </div>
+
+              <div class="experience-settings hidden" id="experienceSettings">
+                <div class="experience-field">
+                  <label for="experienceDifficulty">固定难度 <span id="experienceDifficultyUnit">%</span></label>
+                  <input id="experienceDifficulty" type="number" inputmode="decimal">
+                </div>
+                <div class="experience-field">
+                  <label for="experienceTrialCount">体验次数 <span>试次</span></label>
+                  <input id="experienceTrialCount" type="number" inputmode="numeric" min="1" max="96" step="1" value="16">
+                </div>
+                <p class="field-help" id="experienceDifficultyHelp"></p>
+              </div>
+
+              <div class="mode-explanation" id="modeExplanation">
+                <span class="explanation-icon">◎</span>
+                <div>
+                  <strong>综合训练</strong>
+                  <p>单图、三图、清晰图、移图按固定顺序分段进行，每种分别完成所选训练长度。</p>
+                </div>
+              </div>
+
+              <div class="checklist">
+                <div><span>1</span><p><strong>保持稳定距离</strong><small>建议坐姿稳定并正对屏幕</small></p></div>
+                <div><span>2</span><p><strong>注视中央圆环</strong><small>刺激出现时不要追随图像</small></p></div>
+                <div><span>3</span><p><strong>看不清也要猜</strong><small>错误是阈值测量的一部分</small></p></div>
+              </div>
+
+              <button class="primary-button start-button" id="startTrainingButton" type="button">
+                <span>开始本次训练</span><b aria-hidden="true">→</b>
+              </button>
+            </section>
+
+            <section class="panel trainer-panel" id="trainerPanel">
+              <div class="trainer-toolbar">
+                <div>
+                  <span class="live-indicator"><i></i><span id="trainerStatus">等待开始</span></span>
+                  <strong id="activeModeLabel">综合训练</strong>
+                  <small class="escape-hint">按 Esc 结束训练并退出全屏</small>
+                </div>
+                <div class="trainer-metrics">
+                  <span><small>进度</small><b id="trialProgressText">0 / 16</b></span>
+                  <span><small>正确</small><b id="correctCountText">0</b></span>
+                  <span><small>当前阈值</small><b id="thresholdText">—</b></span>
+                </div>
+              </div>
+
+              <div class="progress-track" aria-hidden="true"><i id="trainingProgressBar"></i></div>
+
+              <div class="stimulus-stage" id="stimulusStage">
+                <canvas id="stimulusCanvas" width="960" height="540" aria-label="视觉刺激区域"></canvas>
+                <div class="fixation" id="fixation" aria-hidden="true"><i></i></div>
+                <div class="stage-message" id="stageMessage">
+                  <span class="stage-orbit"><i></i><i></i><i></i></span>
+                  <h3>训练区已准备</h3>
+                  <p>选择训练模式和长度后，点击“开始本次训练”。</p>
+                </div>
+                <div class="interval-label" id="intervalLabel"></div>
+                <div class="feedback-flash" id="feedbackFlash" aria-live="polite"></div>
+              </div>
+
+              <div class="response-area" id="responseArea" aria-live="polite">
+                <p id="responsePrompt">训练开始后在这里作答</p>
+                <div class="response-buttons temporal-buttons" id="temporalButtons">
+                  <button type="button" data-answer="1"><kbd>左键</kbd><span>第一帧</span></button>
+                  <button type="button" data-answer="2"><kbd>右键</kbd><span>第二帧</span></button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="page" id="testingPage" data-page="testing" aria-labelledby="testingHeading">
+          <div class="training-header">
+            <div>
+              <span class="section-kicker">LANDOLT C ASSESSMENT</span>
+              <h2 id="testingHeading">选择视觉测试项目</h2>
+              <p>使用八方向 Landolt C，通过自适应阶梯法分别测试左眼、右眼和双眼。</p>
+            </div>
+            <div class="protocol-chip">
+              <span>测试顺序</span>
+              <strong>左眼 → 右眼 → 双眼</strong>
+            </div>
+          </div>
+
+          <div class="mode-grid test-mode-grid" id="testModeGrid" role="radiogroup" aria-label="视觉测试项目">
+            <button class="mode-card selected" type="button" data-test-mode="size" role="radio" aria-checked="true">
+              <span class="mode-number">01</span><span class="test-mode-symbol">C</span>
+              <strong>大小测试</strong><small>测量最小可辨 C 尺寸</small>
+            </button>
+            <button class="mode-card" type="button" data-test-mode="contrast" role="radio" aria-checked="false">
+              <span class="mode-number">02</span><span class="test-mode-symbol faded">C</span>
+              <strong>深浅测试</strong><small>固定大小，测量对比度阈值</small>
+            </button>
+            <button class="mode-card" type="button" data-test-mode="crowded-size" role="radio" aria-checked="false">
+              <span class="mode-number">03</span><span class="test-mode-symbol matrix">CC<br>CC</span>
+              <strong>拥挤大小测试</strong><small>比较单 C 与 5×5 中心 C</small>
+            </button>
+            <button class="mode-card" type="button" data-test-mode="crowded-contrast" role="radio" aria-checked="false">
+              <span class="mode-number">04</span><span class="test-mode-symbol matrix faded">CC<br>CC</span>
+              <strong>拥挤深浅测试</strong><small>测量邻近图形造成的对比损失</small>
+            </button>
+          </div>
+
+          <div class="training-layout testing-layout">
+            <section class="panel setup-panel" id="testSetupPanel">
+              <div class="panel-heading">
+                <div><span class="section-kicker">TEST PROTOCOL</span><h3>测试说明</h3></div>
+                <span class="status-badge ready">自适应</span>
+              </div>
+              <div class="mode-explanation" id="testModeExplanation">
+                <span class="explanation-icon">C</span>
+                <div><strong>大小测试</strong><p>辨认 C 缺口方向；连续两次正确后缩小，连续两次错误后放大。</p></div>
+              </div>
+              <div class="test-protocol-list">
+                <div><span>1</span><p><strong>佩戴最佳矫正眼镜</strong><small>保持稳定观看距离；本测试不是验光。</small></p></div>
+                <div><span>2</span><p><strong>按提示遮盖非测试眼</strong><small>只在本次短时测试中遮盖，不代表治疗处方。</small></p></div>
+                <div><span>3</span><p><strong>辨认缺口方向</strong><small>同等难度连续两次同结果后才调整；可使用方向盘或键盘。</small></p></div>
+              </div>
+              <div class="calibration-note">
+                <strong>关于结果单位</strong>
+                <p>大小以浏览器 CSS px 记录；未校准屏幕物理尺寸和观看距离，因此不能直接换算为标准视力或 logMAR。</p>
+              </div>
+              <button class="primary-button start-button" id="startTestButton" type="button"><span>开始视觉测试</span><b aria-hidden="true">→</b></button>
+            </section>
+
+            <section class="panel trainer-panel test-runner-panel" id="testRunnerPanel">
+              <div class="trainer-toolbar">
+                <div>
+                  <span class="live-indicator" id="testLiveIndicator"><i></i><span id="testStatus">等待开始</span></span>
+                  <strong id="activeTestLabel">大小测试</strong>
+                  <small class="escape-hint">按 Esc 结束测试并退出全屏</small>
+                </div>
+                <div class="trainer-metrics">
+                  <span><small>当前眼别</small><b id="testEyeText">—</b></span>
+                  <span><small>本阶段试次</small><b id="testTrialText">0</b></span>
+                  <span><small>当前水平</small><b id="testLevelText">—</b></span>
+                </div>
+              </div>
+              <div class="progress-track" aria-hidden="true"><i id="testProgressBar"></i></div>
+              <div class="stimulus-stage test-stage" id="testStage">
+                <canvas id="testCanvas" width="960" height="540" aria-label="Landolt C 视觉测试区域"></canvas>
+                <div class="stage-message" id="testStageMessage">
+                  <span class="stage-orbit"><i></i><i></i><i></i></span>
+                  <h3>测试区已准备</h3><p>选择测试项目后点击“开始视觉测试”。</p>
+                </div>
+                <div class="feedback-flash" id="testFeedback" aria-live="polite"></div>
+              </div>
+              <div class="response-area test-response-area">
+                <p id="testResponsePrompt">测试开始后选择 C 的缺口方向</p>
+                <div class="direction-pad" id="testDirectionPad" aria-label="八方向答案">
+                  <button type="button" data-direction="up-left" aria-label="左上">↖</button>
+                  <button type="button" data-direction="up" aria-label="上">↑</button>
+                  <button type="button" data-direction="up-right" aria-label="右上">↗</button>
+                  <button type="button" data-direction="left" aria-label="左">←</button>
+                  <span aria-hidden="true">C</span>
+                  <button type="button" data-direction="right" aria-label="右">→</button>
+                  <button type="button" data-direction="down-left" aria-label="左下">↙</button>
+                  <button type="button" data-direction="down" aria-label="下">↓</button>
+                  <button type="button" data-direction="down-right" aria-label="右下">↘</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="page" id="recordsPage" data-page="records" aria-labelledby="recordsHeading">
+          <div class="records-header">
+            <div>
+              <span class="section-kicker">LOCAL TRAINING DATA</span>
+              <h2 id="recordsHeading">用户训练数据</h2>
+              <p>数据直接读取自当前浏览器的 IndexedDB，不会自动上传。</p>
+            </div>
+            <div class="records-actions">
+              <button class="secondary-button" id="refreshDataButton" type="button">刷新数据</button>
+              <button class="secondary-button" id="exportDataButton" type="button">导出 JSON</button>
+              <button class="danger-button" id="clearDataButton" type="button">清空数据</button>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <article class="kpi-card accent-blue">
+              <span>完成训练</span><strong id="totalSessionsKpi">0</strong><small>次会话</small>
+              <i>↗</i>
+            </article>
+            <article class="kpi-card accent-violet">
+              <span>累计试次</span><strong id="totalTrialsKpi">0</strong><small>次判断</small>
+              <i>∑</i>
+            </article>
+            <article class="kpi-card accent-cyan">
+              <span>平均正确率</span><strong id="accuracyKpi">—</strong><small>全部已完成训练</small>
+              <i>◎</i>
+            </article>
+            <article class="kpi-card accent-orange">
+              <span>累计时长</span><strong id="durationKpi">0</strong><small>分钟</small>
+              <i>◷</i>
+            </article>
+          </div>
+
+          <section class="panel current-difficulty-panel">
+            <div class="panel-heading">
+              <div><span class="section-kicker">ADAPTIVE LEVELS</span><h3>当前累计难度</h3></div>
+              <span class="subtle-badge">0–100 · 越高越难</span>
+            </div>
+            <div class="current-difficulty-grid" id="currentDifficultyGrid"></div>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel trend-panel">
+              <div class="panel-heading">
+                <div><span class="section-kicker">ACCURACY TREND</span><h3>正确率趋势</h3></div>
+                <span class="subtle-badge">最近 12 次</span>
+              </div>
+              <div class="chart-wrap" id="accuracyChart"></div>
+            </section>
+
+            <section class="panel mode-summary-panel">
+              <div class="panel-heading">
+                <div><span class="section-kicker">MODE SUMMARY</span><h3>各模式表现</h3></div>
+              </div>
+              <div class="mode-bars" id="modeSummary"></div>
+            </section>
+          </div>
+
+          <section class="panel vision-test-results-panel">
+            <div class="panel-heading">
+              <div><span class="section-kicker">VISION TEST HISTORY</span><h3>视觉测试结果</h3></div>
+              <span class="subtle-badge">左眼 · 右眼 · 双眼</span>
+            </div>
+            <div class="vision-test-charts" id="visionTestCharts"></div>
+            <div class="table-wrap vision-test-table-wrap">
+              <table>
+                <thead><tr><th>测试时间</th><th>测试项目</th><th>左眼</th><th>右眼</th><th>双眼</th><th>状态</th></tr></thead>
+                <tbody id="visionTestsTableBody"></tbody>
+              </table>
+              <div class="test-records-empty" id="visionTestsEmpty">完成视觉测试后，结果会显示在这里。</div>
+            </div>
+          </section>
+
+          <section class="panel sessions-panel">
+            <div class="panel-heading sessions-heading">
+              <div><span class="section-kicker">SESSION HISTORY</span><h3>训练会话记录</h3></div>
+              <label class="search-field">
+                <span aria-hidden="true">⌕</span>
+                <input id="sessionSearch" type="search" placeholder="搜索模式或日期">
+              </label>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>开始时间</th><th>训练模式</th><th>完成情况</th><th>正确率</th><th>训练时长</th><th>最终阈值</th><th></th></tr></thead>
+                <tbody id="sessionsTableBody"></tbody>
+              </table>
+              <div class="empty-state" id="recordsEmptyState">
+                <span>▥</span><h3>还没有训练数据</h3><p>完成一次视觉训练后，会话和试次数据会显示在这里。</p>
+                <a href="#/training">开始第一次训练</a>
+              </div>
+            </div>
+            <div class="pagination" id="sessionsPagination" aria-label="训练会话分页"></div>
+          </section>
+
+          <section class="panel difficulty-trends-panel">
+            <div class="panel-heading">
+              <div><span class="section-kicker">DIFFICULTY HISTORY</span><h3>累计难度变化曲线</h3></div>
+              <span class="subtle-badge">纵轴为等效难度阶数 · 越高越难</span>
+            </div>
+            <div class="difficulty-trends-grid" id="difficultyTrendsGrid"></div>
+          </section>
+
+          <section class="panel trial-detail-panel hidden" id="trialDetailPanel">
+            <div class="panel-heading">
+              <div><span class="section-kicker">TRIAL DETAILS</span><h3 id="trialDetailTitle">试次明细</h3></div>
+              <button class="icon-button" id="closeTrialDetail" type="button" aria-label="关闭明细">×</button>
+            </div>
+            <div class="table-wrap compact-table">
+              <table>
+                <thead><tr><th>#</th><th>模式</th><th>答案</th><th>结果</th><th>反应时间</th><th>训练参数</th></tr></thead>
+                <tbody id="trialsTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+  <defs>
+    <radialGradient id="fade" cx="50%" cy="50%" r="48%">
+      <stop offset="0%" stop-color="white" stop-opacity="1"/>
+      <stop offset="52%" stop-color="white" stop-opacity=".7"/>
+      <stop offset="82%" stop-color="white" stop-opacity=".18"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="patch-mask">
+      <rect width="900" height="900" fill="black"/>
+      <circle cx="450" cy="210" r="138" fill="url(#fade)"/>
+      <circle cx="450" cy="450" r="138" fill="url(#fade)"/>
+      <circle cx="450" cy="690" r="138" fill="url(#fade)"/>
+    </mask>
+    <filter id="soft-blur">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+  <rect width="900" height="900" fill="#9f9f9d"/>
+  <g mask="url(#patch-mask)" filter="url(#soft-blur)">
+    <g opacity=".78">
+      <rect x="332" y="74" width="22" height="272" fill="#7e7e7c"/>
+      <rect x="354" y="74" width="22" height="272" fill="#bfbfbd"/>
+      <rect x="376" y="74" width="22" height="272" fill="#71716f"/>
+      <rect x="398" y="74" width="22" height="272" fill="#cacac8"/>
+      <rect x="420" y="74" width="22" height="272" fill="#666664"/>
+      <rect x="442" y="74" width="22" height="272" fill="#d0d0ce"/>
+      <rect x="464" y="74" width="22" height="272" fill="#696967"/>
+      <rect x="486" y="74" width="22" height="272" fill="#c8c8c6"/>
+      <rect x="508" y="74" width="22" height="272" fill="#777775"/>
+      <rect x="530" y="74" width="22" height="272" fill="#bdbdbb"/>
+      <rect x="552" y="74" width="22" height="272" fill="#848482"/>
+    </g>
+    <g opacity=".34">
+      <rect x="332" y="314" width="22" height="272" fill="#929290"/>
+      <rect x="354" y="314" width="22" height="272" fill="#ababaa"/>
+      <rect x="376" y="314" width="22" height="272" fill="#898987"/>
+      <rect x="398" y="314" width="22" height="272" fill="#b4b4b2"/>
+      <rect x="420" y="314" width="22" height="272" fill="#838381"/>
+      <rect x="442" y="314" width="22" height="272" fill="#b9b9b7"/>
+      <rect x="464" y="314" width="22" height="272" fill="#858583"/>
+      <rect x="486" y="314" width="22" height="272" fill="#b2b2b0"/>
+      <rect x="508" y="314" width="22" height="272" fill="#90908e"/>
+      <rect x="530" y="314" width="22" height="272" fill="#aaa9a8"/>
+      <rect x="552" y="314" width="22" height="272" fill="#969694"/>
+    </g>
+    <g opacity=".78">
+      <rect x="332" y="554" width="22" height="272" fill="#7e7e7c"/>
+      <rect x="354" y="554" width="22" height="272" fill="#bfbfbd"/>
+      <rect x="376" y="554" width="22" height="272" fill="#71716f"/>
+      <rect x="398" y="554" width="22" height="272" fill="#cacac8"/>
+      <rect x="420" y="554" width="22" height="272" fill="#666664"/>
+      <rect x="442" y="554" width="22" height="272" fill="#d0d0ce"/>
+      <rect x="464" y="554" width="22" height="272" fill="#696967"/>
+      <rect x="486" y="554" width="22" height="272" fill="#c8c8c6"/>
+      <rect x="508" y="554" width="22" height="272" fill="#777775"/>
+      <rect x="530" y="554" width="22" height="272" fill="#bdbdbb"/>
+      <rect x="552" y="554" width="22" height="272" fill="#848482"/>
+    </g>
+  </g>
+</svg>

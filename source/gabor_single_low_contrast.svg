@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="720" viewBox="0 0 900 720">
+  <defs>
+    <radialGradient id="fade" cx="50%" cy="50%" r="42%">
+      <stop offset="0%" stop-color="white" stop-opacity="1"/>
+      <stop offset="45%" stop-color="white" stop-opacity=".72"/>
+      <stop offset="78%" stop-color="white" stop-opacity=".18"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="soft-mask">
+      <rect width="900" height="720" fill="black"/>
+      <circle cx="450" cy="360" r="230" fill="url(#fade)"/>
+    </mask>
+    <filter id="soft-blur">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <rect width="900" height="720" fill="#9f9f9d"/>
+  <g mask="url(#soft-mask)" filter="url(#soft-blur)" opacity=".54">
+    <rect x="244" y="180" width="26" height="360" fill="#9a9a98"/>
+    <rect x="270" y="180" width="26" height="360" fill="#a8a8a6"/>
+    <rect x="296" y="180" width="26" height="360" fill="#8f8f8d"/>
+    <rect x="322" y="180" width="26" height="360" fill="#b1b1af"/>
+    <rect x="348" y="180" width="26" height="360" fill="#838381"/>
+    <rect x="374" y="180" width="26" height="360" fill="#bababa"/>
+    <rect x="400" y="180" width="26" height="360" fill="#7d7d7b"/>
+    <rect x="426" y="180" width="26" height="360" fill="#c1c1bf"/>
+    <rect x="452" y="180" width="26" height="360" fill="#828280"/>
+    <rect x="478" y="180" width="26" height="360" fill="#b9b9b7"/>
+    <rect x="504" y="180" width="26" height="360" fill="#8e8e8c"/>
+    <rect x="530" y="180" width="26" height="360" fill="#adadab"/>
+    <rect x="556" y="180" width="26" height="360" fill="#989896"/>
+    <rect x="582" y="180" width="26" height="360" fill="#a7a7a5"/>
+    <rect x="608" y="180" width="26" height="360" fill="#9b9b99"/>
+  </g>
+</svg>
