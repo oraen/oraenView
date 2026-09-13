@@ -92,7 +92,7 @@ body.agreement-open { overflow: hidden; }
 .sidebar-note { margin-top: auto; display: flex; gap: 10px; padding: 14px; border: 1px solid rgba(143,160,212,.15); border-radius: 13px; background: rgba(255,255,255,.04); }
 .note-dot { width: 8px; height: 8px; margin-top: 5px; flex: 0 0 8px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 5px rgba(255,156,82,.12); }
 .sidebar-note strong { font-size: 12px; }.sidebar-note p { margin: 5px 0 0; color: #8997c1; font-size: 10px; line-height: 1.55; }
-.sidebar-footer { display: flex; gap: 11px; align-items: center; margin-top: 18px; padding: 17px 10px 0; border-top: 1px solid rgba(255,255,255,.09); }
+.sidebar-footer { display: flex; gap: 11px; align-items: center; margin-top: auto; padding: 17px 10px 0; border-top: 1px solid rgba(255,255,255,.09); }
 .avatar { width: 35px; height: 35px; display: grid; place-items: center; border-radius: 10px; color: #fff; background: linear-gradient(145deg, #4968ff, #8c58ee); font-size: 11px; font-weight: 800; }
 .sidebar-footer strong, .sidebar-footer small { display: block; }.sidebar-footer strong { font-size: 11px; }.sidebar-footer small { margin-top: 4px; color: #7180ab; font-size: 9px; }
 
@@ -312,3 +312,39 @@ body.testing-focus .toast-region { z-index: 300; }
   .vision-test-results-panel { padding: 15px; }
   .test-response-area { align-items: center; }
 }
+/* Palm training keeps a compact layout even when opened on a desktop. */
+.mobile-page { max-width: 560px; margin: 0 auto; }
+.mobile-intro p { line-height: 1.8; color: #657181; }
+.mobile-intro small { color: #5875bd; }
+.mobile-mode-list { display: grid; gap: 10px; margin: 24px 0; }
+.mobile-mode-list button { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px 18px; text-align: left; background: #fff; border: 1px solid #e0e5ed; border-radius: 14px; cursor: pointer; }
+.mobile-mode-list button span { font-size: 12px; color: #657181; }
+.mobile-mode-list button:hover:not(:disabled) { border-color: #5479de; }
+.mobile-page .stimulus-stage { min-height: 0; background: rgb(158,158,158); }
+.mobile-page canvas { display: block; width: 100%; max-width: 480px; aspect-ratio: 1; }
+.mobile-page .trainer-toolbar { flex-wrap: wrap; gap: 12px; padding: 14px; }
+.mobile-page .trainer-toolbar > div:first-child { width: 100%; grid-template-columns: 1fr auto; align-items: center; }
+.mobile-page .trainer-toolbar strong { font-size: 16px; }
+.mobile-page .live-indicator { color: #344054; font-size: 11px; }
+.mobile-page .trainer-metrics { width: 100%; justify-content: space-between; gap: 18px; }
+.mobile-page .trainer-metrics small { color: #344054; font-size: 10px; }
+.mobile-page .trainer-metrics b { font-size: 13px; }
+.mobile-page .response-area { display: block; padding: 12px 16px; }
+.mobile-page .response-area > p { min-height: 3em; margin: 0 0 10px; line-height: 1.5; font-size: 14px; color: #273244; }
+.mobile-page .temporal-buttons { display: grid; grid-template-columns: 1fr 1fr; pointer-events: auto; }
+.mobile-page .response-buttons button { min-width: 0; min-height: 64px; font-size: 16px; pointer-events: auto; touch-action: manipulation; user-select: none; }
+.mobile-page .response-buttons kbd { font: inherit; border: 0; box-shadow: none; }
+.mobile-page [data-mobile="startButton"] { margin-top: 16px; width: 100%; }
+#mobileExit { display: none; }
+body.mobile-training-focus { overflow: hidden; }
+body.mobile-training-focus .mobile-page { animation: none; }
+body.mobile-training-focus [data-mobile="trainerPanel"] { position: fixed; inset: 0; z-index: 200; border: 0; border-radius: 0; display: grid; grid-template-rows: auto 3px minmax(0, 1fr) auto; height: 100dvh; background: rgb(158,158,158); padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+body.mobile-training-focus .mobile-page .stimulus-stage { container-type: size; }
+body.mobile-training-focus .mobile-page canvas { width: min(100cqw, 100cqh, 480px); height: min(100cqw, 100cqh, 480px); }
+body.mobile-training-focus .mobile-page .trainer-toolbar, body.mobile-training-focus .mobile-page .response-area { background: rgb(158,158,158); }
+body.mobile-training-focus #mobileExit { display: inline-block; grid-column: 2; grid-row: 1 / 3; min-height: 44px; font-size: 13px; }
+body.mobile-training-focus .toast-region { z-index: 300; }
+.records-platform { display: flex; gap: 8px; margin-top: 16px; }
+.records-platform button { border: 1px solid #dce2eb; border-radius: 9px; padding: 11px 22px; background: #fff; cursor: pointer; }
+.records-platform button[aria-pressed="true"] { background: #315fcb; border-color: #315fcb; color: #fff; }
+#recordsPlatformHint { color: #657181; font-size: 13px; line-height: 1.6; margin-bottom: 20px; }

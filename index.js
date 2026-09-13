@@ -55,6 +55,6 @@ const server = http.createServer((request, response) => {
   });
 });
 
-server.listen(port, "127.0.0.1", () => {
+server.listen(port, "0.0.0.0", () => {
   console.log(`Oraen View is running at http://127.0.0.1:${port}`);
 });

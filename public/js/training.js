@@ -1,4 +1,5 @@
-import { ADAPTIVE_LEVELS_KEY, createId, getSetting, saveSession, saveSetting, saveTrial } from "./db.js";
+import * as desktopStorage from "./db.js";
+import { createId } from "./db.js";
 import { drawBlank, drawShifted, drawSingle, drawTriple } from "./gabor.js";
 
 export const MODE_INFO = {
@@ -51,7 +52,8 @@ function sleep(milliseconds) {
 }
 
 export class TrainingController {
-  constructor({ onToast, onSessionChanged } = {}) {
+  constructor({ onToast, onSessionChanged, storage = desktopStorage, elements } = {}) {
+    this.storage = storage;
     this.onToast = onToast || (() => {});
     this.onSessionChanged = onSessionChanged || (() => {});
     this.selectedMode = "mixed";
@@ -74,7 +76,7 @@ export class TrainingController {
     this.inheritedModes = [];
     this.correctStreaks = {};
 
-    this.elements = {
+    this.elements = elements || {
       modeGrid: document.querySelector("#modeGrid"),
       modeCards: [...document.querySelectorAll("#modeGrid .mode-card")],
       sessionTypeButtons: [...document.querySelectorAll("[data-session-type]")],
@@ -97,7 +99,7 @@ export class TrainingController {
       feedbackFlash: document.querySelector("#feedbackFlash"),
       responsePrompt: document.querySelector("#responsePrompt"),
       temporalButtons: document.querySelector("#temporalButtons"),
-      responseButtons: [...document.querySelectorAll(".response-buttons button")],
+      responseButtons: [...document.querySelectorAll("#trainerPanel .response-buttons button")],
       status: document.querySelector("#trainerStatus"),
       liveIndicator: document.querySelector("#trainerPanel .live-indicator"),
       activeModeLabel: document.querySelector("#activeModeLabel"),
@@ -399,7 +401,7 @@ export class TrainingController {
     };
 
     try {
-      await saveSession(this.session);
+      await this.storage.saveSession(this.session);
     } catch (error) {
       this.state = "idle";
       await this.leaveFocusMode();
@@ -434,7 +436,7 @@ export class TrainingController {
     }
 
     try {
-      const storedLevels = await getSetting(ADAPTIVE_LEVELS_KEY);
+      const storedLevels = await this.storage.getSetting(this.storage.ADAPTIVE_LEVELS_KEY);
       TASK_MODES.forEach((mode) => {
         const storedValue = Number(storedLevels?.[mode]);
         if (!Number.isFinite(storedValue)) return;
@@ -454,7 +456,7 @@ export class TrainingController {
     new Set(this.trials.map((trial) => trial.mode)).forEach((mode) => {
       nextLevels[mode] = round(this.levels[mode]);
     });
-    await saveSetting(ADAPTIVE_LEVELS_KEY, nextLevels);
+    await this.storage.saveSetting(this.storage.ADAPTIVE_LEVELS_KEY, nextLevels);
     this.persistedLevels = nextLevels;
   }
 
@@ -727,7 +729,7 @@ export class TrainingController {
     this.trials.push(storedTrial);
 
     try {
-      await saveTrial(storedTrial);
+      await this.storage.saveTrial(storedTrial);
     } catch (error) {
       this.onToast(`试次记录保存失败：${error.message}`, "error");
     }
@@ -763,7 +765,7 @@ export class TrainingController {
   }
 
   async completeSession() {
-    this.state = "completed";
+    this.state = "finishing";
     this.runToken += 1;
     const endedAt = new Date().toISOString();
     const durationMs = new Date(endedAt) - new Date(this.session.startedAt);
@@ -793,7 +795,7 @@ export class TrainingController {
     };
 
     try {
-      await saveSession(this.session);
+      await this.storage.saveSession(this.session);
     } catch (error) {
       this.onToast(`会话汇总保存失败：${error.message}`, "error");
     }
@@ -818,6 +820,7 @@ export class TrainingController {
     this.elements.responsePrompt.textContent = "可以前往“训练数据”查看本次结果";
     this.setResponseEnabled(false);
     this.elements.temporalButtons.classList.remove("hidden");
+    this.state = "completed";
     this.lockSetup(false);
     this.elements.startButton.querySelector("span").textContent = this.session.isExperience ? "再体验一次" : "再训练一次";
     this.updateMetrics();
@@ -826,9 +829,9 @@ export class TrainingController {
   }
 
   async abortSession(reason = "interrupted") {
-    if (!this.isRunning()) return;
+    if (!this.isRunning() || this.state === "finishing" || this.state === "aborting") return;
     this.runToken += 1;
-    this.state = "aborted";
+    this.state = "aborting";
     if (!this.session) {
       await this.leaveFocusMode();
       this.resetStage();
@@ -849,7 +852,7 @@ export class TrainingController {
       durationMs: new Date(endedAt) - new Date(this.session.startedAt),
       finalLevels: structuredClone(this.levels),
     };
-    try { await saveSession(this.session); } catch { /* best effort during navigation */ }
+    try { await this.storage.saveSession(this.session); } catch { /* best effort during navigation */ }
     await this.leaveFocusMode();
     this.resetStage();
     this.onSessionChanged();

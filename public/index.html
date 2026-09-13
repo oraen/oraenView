@@ -5,19 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111c44">
   <meta name="description" content="Oraen View Gabor 视觉知觉训练研究原型">
-  <title>Oraen View 视觉训练平台</title>
+  <title>开源视觉 Oraen View</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <div class="app-shell" inert>
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#/training" aria-label="Oraen View 首页">
+      <a class="brand" href="#/training" aria-label="开源视觉 首页">
         <span class="brand-mark" aria-hidden="true">
           <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
         </span>
         <span>
-          <strong>ORAEN VIEW</strong>
-          <small>VISION STUDIO</small>
+          <strong>开源视觉</strong>
+          <small>ORAEN VIEW</small>
         </span>
       </a>
 
@@ -26,6 +26,9 @@
         <a class="nav-item" href="#/training" data-route="training">
           <span class="nav-icon" aria-hidden="true">◉</span>
           <span>视觉训练</span>
+        </a>
+        <a class="nav-item" href="#/mobile" data-route="mobile">
+          <span class="nav-icon" aria-hidden="true">▯</span><span>掌上训练</span>
         </a>
         <a class="nav-item" href="#/testing" data-route="testing">
           <span class="nav-icon" aria-hidden="true">◌</span>
@@ -44,14 +47,6 @@
           <span>关于项目</span>
         </a>
       </nav>
-
-      <div class="sidebar-note">
-        <span class="note-dot"></span>
-        <div>
-          <strong>研究原型</strong>
-          <p>本版本用于训练机制验证，尚未完成医疗级显示校准。</p>
-        </div>
-      </div>
 
       <div class="sidebar-footer">
         <div class="avatar">OV</div>
@@ -220,6 +215,57 @@
           </div>
         </section>
 
+        <section class="page mobile-page" id="mobilePage" data-page="mobile" aria-labelledby="mobileHeading">
+          <div class="mobile-intro"><h2 id="mobileHeading">掌上训练</h2>
+            <p>选好模式就开始，单项 64 题；综合训练每项 64 题，共 256 题。看到作答提示后，点击下方的左键或右键。</p>
+            <p>每次尽量保持相同的屏幕尺寸、观看距离和光线，距离屏幕最好半米以上。双眼训练，无需遮盖；平时戴眼镜的话，训练时也请戴上。</p>
+            <small>掌上训练的记录和难度单独保存，不会影响电脑版。</small>
+          </div>
+          <div class="mobile-mode-list"><button type="button" data-mobile-mode="mixed"><strong>综合训练</strong><span>四种模式，各 64 次 →</span></button>
+<button type="button" data-mobile-mode="single"><strong>单图训练</strong><span>选出有图像的那一帧 →</span></button>
+<button type="button" data-mobile-mode="triple"><strong>三图训练</strong><span>选出有中间图像的那一帧 →</span></button>
+<button type="button" data-mobile-mode="darker"><strong>清晰图训练</strong><span>选出更清晰的那一帧 →</span></button>
+<button type="button" data-mobile-mode="shifted"><strong>移图训练</strong><span>判断中间图像偏向哪边 →</span></button>
+</div>
+            <section class="panel trainer-panel" data-mobile="trainerPanel">
+              <div class="trainer-toolbar">
+                <div>
+                  <span class="live-indicator" data-mobile="liveIndicator"><i></i><span data-mobile="status">等待开始</span></span>
+                  <strong data-mobile="activeModeLabel">综合训练</strong>
+                  <button type="button" id="mobileExit" class="secondary-button">结束训练</button>
+                </div>
+                <div class="trainer-metrics">
+                  <span><small>进度</small><b data-mobile="progressText">0 / 64</b></span>
+                  <span><small>正确</small><b data-mobile="correctText">0</b></span>
+                  <span><small>当前阈值</small><b data-mobile="thresholdText">—</b></span>
+                </div>
+              </div>
+
+              <div class="progress-track" aria-hidden="true"><i data-mobile="progressBar"></i></div>
+
+              <div class="stimulus-stage" >
+                <canvas data-mobile="canvas" width="480" height="480" aria-label="视觉刺激区域"></canvas>
+                <div class="fixation" data-mobile="fixation" aria-hidden="true"><i></i></div>
+                <div class="stage-message" data-mobile="stageMessage">
+                  <span class="stage-orbit"><i></i><i></i><i></i></span>
+                  <h3>训练区已准备</h3>
+                  <p>选择训练模式和长度后，点击“开始本次训练”。</p>
+                </div>
+                <div class="interval-label" data-mobile="intervalLabel"></div>
+                <div class="feedback-flash" data-mobile="feedbackFlash" aria-live="polite"></div>
+              </div>
+
+              <div class="response-area"  aria-live="polite">
+                <p data-mobile="responsePrompt">训练开始后在这里作答</p>
+                <div class="response-buttons temporal-buttons" data-mobile="temporalButtons">
+                  <button type="button" data-answer="1"><kbd>左键</kbd><span>第一帧</span></button>
+                  <button type="button" data-answer="2"><kbd>右键</kbd><span>第二帧</span></button>
+                </div>
+              </div>
+            </section>
+          <button type="button" class="primary-button hidden" data-mobile="startButton"><span>再训练一次</span></button>
+        </section>
+
         <section class="page" id="testingPage" data-page="testing" aria-labelledby="testingHeading">
           <div class="training-header">
             <div>
@@ -328,6 +374,11 @@
             </div>
           </div>
 
+          <div class="records-platform" aria-label="训练数据来源">
+            <button type="button" data-records-platform="desktop" aria-pressed="true">电脑版</button>
+            <button type="button" data-records-platform="mobile" aria-pressed="false">掌上训练</button>
+          </div>
+          <p id="recordsPlatformHint">当前显示电脑版数据；导出和清空仅针对电脑版。</p>
           <div class="kpi-grid">
             <article class="kpi-card accent-blue">
               <span>完成训练</span><strong id="totalSessionsKpi">0</strong><small>次会话</small>

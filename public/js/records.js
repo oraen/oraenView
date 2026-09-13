@@ -1,4 +1,5 @@
-import { ADAPTIVE_LEVELS_KEY, clearTrainingData, exportTrainingData, getAllTrials, getSessions, getSetting, getTrialsBySession, getVisionTests, pruneTrainingData } from "./db.js";
+import * as desktopStorage from "./db.js";
+import * as mobileStorage from "./mobile-db.js";
 import { INITIAL_LEVELS, LEVEL_BOUNDS, MODE_INFO } from "./training.js";
 import { TEST_INFO } from "./visual-test.js";
 
@@ -89,6 +90,9 @@ function answerLabel(answer) {
 export class RecordsController {
   constructor({ onToast } = {}) {
     this.onToast = onToast || (() => {});
+    this.platform = "desktop";
+    this.storage = desktopStorage;
+    this.loadToken = 0;
     this.sessions = [];
     this.trials = [];
     this.currentLevels = {};
@@ -122,7 +126,23 @@ export class RecordsController {
     this.bindEvents();
   }
 
+  selectPlatform(platform) {
+    if (!["desktop", "mobile"].includes(platform) || this.platform === platform) return false;
+    this.platform = platform;
+    this.storage = platform === "mobile" ? mobileStorage : desktopStorage;
+    this.loadToken += 1;
+    this.loaded = false;
+    this.currentPage = 1;
+    this.elements.search.value = "";
+    this.elements.detailPanel.classList.add("hidden");
+    return true;
+  }
+
   bindEvents() {
+    document.querySelectorAll("[data-records-platform]").forEach((button) => button.addEventListener("click", () => {
+      if (!this.selectPlatform(button.dataset.recordsPlatform)) return;
+      this.load();
+    }));
     this.elements.refresh.addEventListener("click", () => this.load(true));
     this.elements.export.addEventListener("click", () => this.exportData());
     this.elements.clear.addEventListener("click", () => this.clearData());
@@ -149,18 +169,34 @@ export class RecordsController {
   }
 
   async load(showToast = false) {
+    const token = ++this.loadToken;
+    const storage = this.storage;
+    this.elements.export.disabled = true;
+    this.elements.clear.disabled = true;
+    document.querySelector("#recordsPlatformHint").textContent = "正在读取数据…";
     try {
-      await pruneTrainingData(MAX_VISIBLE_SESSIONS);
-      [this.sessions, this.trials, this.currentLevels, this.visionTests] = await Promise.all([
-        getSessions(),
-        getAllTrials(),
-        getSetting(ADAPTIVE_LEVELS_KEY).then((levels) => levels || {}),
-        getVisionTests(),
+      await storage.pruneTrainingData(MAX_VISIBLE_SESSIONS);
+      const data = await Promise.all([
+        storage.getSessions(),
+        storage.getAllTrials(),
+        storage.getSetting(storage.ADAPTIVE_LEVELS_KEY).then((levels) => levels || {}),
+        storage.getVisionTests(),
       ]);
+      if (token !== this.loadToken) return;
+      [this.sessions, this.trials, this.currentLevels, this.visionTests] = data;
+      const mobile = this.platform === "mobile";
+      document.querySelectorAll("[data-records-platform]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.recordsPlatform === this.platform)));
+      document.querySelector("#recordsPlatformHint").textContent = `当前显示${mobile ? "掌上训练" : "电脑版"}数据；曲线、导出和清空仅针对这一端。两端难度不互通。`;
+      this.elements.visionTestCharts.closest(".vision-test-results-panel").classList.toggle("hidden", mobile);
+      this.elements.empty.querySelector("a").href = mobile ? "#/mobile" : "#/training";
+      this.elements.export.disabled = false;
+      this.elements.clear.disabled = false;
       this.loaded = true;
       this.render();
       if (showToast) this.onToast("训练数据已刷新", "success");
     } catch (error) {
+      if (token !== this.loadToken) return;
+      document.querySelector("#recordsPlatformHint").textContent = "数据读取失败，请点击刷新重试。";
       this.onToast(`读取训练数据失败：${error.message}`, "error");
     }
   }
@@ -521,7 +557,9 @@ export class RecordsController {
     const session = this.sessions.find((item) => item.id === sessionId);
     if (!session) return;
     try {
-      const trials = await getTrialsBySession(sessionId);
+      const token = this.loadToken;
+      const trials = await this.storage.getTrialsBySession(sessionId);
+      if (token !== this.loadToken) return;
       const experience = isExperienceSession(session);
       this.elements.detailPanel.classList.toggle("experience-session-detail", experience);
       this.elements.detailTitle.textContent = `${formatDate(session.startedAt, true)} · ${session.modeLabel}${experience ? " · 体验模式" : ""} · ${trials.length} 个试次`;
@@ -550,13 +588,14 @@ export class RecordsController {
   }
 
   async exportData() {
+    const platform = this.platform;
     try {
-      const data = await exportTrainingData();
+      const data = await this.storage.exportTrainingData();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `oraen-view-data-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `oraen-view-${platform}-data-${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
       URL.revokeObjectURL(url);
       this.onToast("训练数据已导出", "success");
@@ -570,9 +609,9 @@ export class RecordsController {
       this.onToast("当前没有可清理的数据");
       return;
     }
-    if (!window.confirm("确定清空当前浏览器中的全部训练与视觉测试记录吗？此操作不可恢复。")) return;
+    if (!window.confirm(`确定清空${this.platform === "mobile" ? "掌上训练的记录与难度" : "电脑版的训练、难度与视觉测试记录"}吗？另一端的数据不受影响。此操作不可恢复。`)) return;
     try {
-      await clearTrainingData();
+      await this.storage.clearTrainingData();
       this.elements.detailPanel.classList.add("hidden");
       await this.load();
       this.onToast("训练数据已清空", "success");

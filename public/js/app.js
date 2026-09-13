@@ -5,7 +5,15 @@ import { VisualTestController } from "./visual-test.js";
 import { drawGuideExamples } from "./guide.js";
 import { requireAgreement, showAgreement } from "./agreement.js";
 
+import { MobileTrainingController } from "./mobile-training.js";
+
+import { isMobileDevice } from "./device.js";
+
+const defaultPlatform = isMobileDevice() ? "mobile" : "desktop";
+const defaultRoute = defaultPlatform === "mobile" ? "mobile" : "training";
+
 const PAGE_META = {
+  mobile: { title: "掌上训练", eyebrow: "MOBILE TRAINING" },
   training: { title: "视觉训练", eyebrow: "TRAINING CENTER" },
   testing: { title: "视觉测试", eyebrow: "LANDOLT C ASSESSMENT" },
   records: { title: "训练数据", eyebrow: "LOCAL DATA CENTER" },
@@ -25,12 +33,13 @@ function toast(message, type = "default") {
 let records;
 let training;
 let visualTest;
+let mobileTraining;
 let currentRoute = "training";
 let routeGuardActive = false;
 
 function getRoute() {
   const routeName = location.hash.replace(/^#\//, "").split("/")[0];
-  return PAGE_META[routeName] ? routeName : "training";
+  return PAGE_META[routeName] ? routeName : defaultRoute;
 }
 
 async function route() {
@@ -46,6 +55,9 @@ async function route() {
     }
     await training.abortSession("route_change");
   }
+  if (currentRoute === "mobile" && nextRoute !== "mobile" && mobileTraining.isRunning()) {
+    await mobileTraining.abortSession("route_change");
+  }
   if (currentRoute === "testing" && nextRoute !== "testing" && visualTest.isRunning()) {
     const leave = window.confirm("视觉测试尚未完成。离开后已完成阶段会保留，确定离开吗？");
     if (!leave) {
@@ -57,13 +69,14 @@ async function route() {
     await visualTest.abort("route_change");
   }
 
+  if (nextRoute === "records" && currentRoute !== "records") records.selectPlatform(defaultPlatform);
   currentRoute = nextRoute;
   document.querySelectorAll(".page").forEach((page) => page.classList.toggle("active", page.dataset.page === nextRoute));
   document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.route === nextRoute));
   document.querySelector("#pageTitle").textContent = PAGE_META[nextRoute].title;
   document.querySelector("#pageEyebrow").textContent = PAGE_META[nextRoute].eyebrow;
   document.querySelector("#sidebar").classList.remove("open");
-  document.title = `${PAGE_META[nextRoute].title} · Oraen View`;
+  document.title = "开源视觉 Oraen View";
   if (nextRoute === "records" && !records.loaded) await records.load();
   window.scrollTo({ top: 0, behavior: "instant" });
 }
@@ -84,7 +97,7 @@ function bindAppEvents() {
   });
   window.addEventListener("hashchange", route);
   window.addEventListener("beforeunload", (event) => {
-    if (!training.isRunning() && !visualTest.isRunning()) return;
+    if (!training.isRunning() && !mobileTraining.isRunning() && !visualTest.isRunning()) return;
     event.preventDefault();
     event.returnValue = "";
   });
@@ -98,11 +111,16 @@ async function initialize() {
   shell.inert = false;
   records = new RecordsController({ onToast: toast });
   training = new TrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
+  mobileTraining = new MobileTrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
   visualTest = new VisualTestController({ onToast: toast, onTestChanged: () => records.invalidate() });
   bindAppEvents();
   if (!agreement.persisted) toast("浏览器未能保存同意记录，本次可正常使用，下次打开时需要重新确认。");
   try { await openDatabase(); } catch (error) { toast(`IndexedDB 初始化失败：${error.message}`, "error"); }
-  if (!location.hash) location.replace("#/training");
+  if (!location.hash || location.hash === "#/" || location.hash === "#") {
+    const pathRoute = location.pathname.replace(/^\/|\/$/g, "");
+    const initialRoute = PAGE_META[pathRoute] ? pathRoute : defaultRoute;
+    history.replaceState(null, "", `${location.pathname}${location.search}#/${initialRoute}`);
+  }
   await route();
   document.querySelector("#pageTitle").focus();
 }
