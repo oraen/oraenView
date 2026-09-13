@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/><title>开源视觉 Oraen View</title><link href="./images/author-avatar.jpg" rel="icon"/><link href="./style.css" rel="stylesheet"/></head>
+<body><header class="tool-header"><strong>开源视觉</strong><span>ORAEN VIEW</span></header>
+<nav aria-label="功能菜单" class="tool-nav"><button aria-pressed="true" data-route="mobile" type="button">掌上训练</button><button aria-pressed="false" data-route="records" type="button">训练数据</button></nav>
+<p class="hidden" id="startupStatus" role="alert"></p><main class="page-container"><section aria-labelledby="mobileHeading" class="page mobile-page" data-page="mobile" id="mobilePage">
+<div class="mobile-intro"><h2 id="mobileHeading">掌上训练</h2>
+<p>每次尽量保持相同的屏幕尺寸、观看距离和光线，距离屏幕最好半米以上。双眼训练，无需遮盖；平时戴眼镜的话，训练时也请戴上。</p>
+</div>
+<div class="mobile-mode-list"><button data-mobile-mode="mixed" type="button"><strong>综合训练</strong><span>四种模式，各 64 次 →</span></button>
+<button data-mobile-mode="single" type="button"><strong>单图训练</strong><span>选出有图像的那一帧 →</span></button>
+<button data-mobile-mode="triple" type="button"><strong>三图训练</strong><span>选出有中间图像的那一帧 →</span></button>
+<button data-mobile-mode="darker" type="button"><strong>清晰图训练</strong><span>选出更清晰的那一帧 →</span></button>
+<button data-mobile-mode="shifted" type="button"><strong>移图训练</strong><span>判断中间图像偏向哪边 →</span></button>
+</div><p class="tool-site-caption">专业版：view.oraen.com</p>
+<section class="panel trainer-panel" data-mobile="trainerPanel">
+<div class="trainer-toolbar">
+<div>
+<span class="live-indicator" data-mobile="liveIndicator"><i></i><span data-mobile="status">等待开始</span></span>
+<strong data-mobile="activeModeLabel">综合训练</strong>
+<button class="secondary-button" id="mobileExit" type="button">结束训练</button>
+</div>
+<div class="trainer-metrics">
+<span><small>进度</small><b data-mobile="progressText">0 / 64</b></span>
+<span><small>正确率</small><b data-mobile="correctText">—</b></span>
+<span><small>当前阈值</small><b data-mobile="thresholdText">—</b></span>
+</div>
+</div>
+<div aria-hidden="true" class="progress-track"><i data-mobile="progressBar"></i></div>
+<div class="stimulus-stage">
+<canvas aria-label="视觉刺激区域" data-mobile="canvas" height="480" width="480"></canvas>
+<div aria-hidden="true" class="fixation" data-mobile="fixation"><i></i></div>
+<div class="stage-message" data-mobile="stageMessage">
+<span class="stage-orbit"><i></i><i></i><i></i></span>
+<h3>训练区已准备</h3>
+<p>选择训练模式和长度后，点击“开始本次训练”。</p>
+</div>
+<div class="interval-label" data-mobile="intervalLabel"></div>
+<div aria-live="polite" class="feedback-flash" data-mobile="feedbackFlash"></div>
+</div>
+<div aria-live="polite" class="response-area">
+<p data-mobile="responsePrompt">训练开始后在这里作答</p>
+<div class="response-buttons temporal-buttons" data-mobile="temporalButtons">
+<button data-answer="1" type="button"><kbd>左键</kbd><span>第一帧</span></button>
+<button data-answer="2" type="button"><kbd>右键</kbd><span>第二帧</span></button>
+</div>
+</div>
+</section>
+<button class="primary-button hidden" data-mobile="startButton" type="button"><span>再训练一次</span></button>
+</section><section aria-labelledby="recordsHeading" class="page" data-page="records" id="recordsPage">
+<div class="records-header">
+<div>
+<span class="section-kicker">LOCAL TRAINING DATA</span>
+<h2 id="recordsHeading">用户训练数据</h2>
+<p>记录保存在当前小工具中，不会上传。清理小工具数据后记录可能丢失。</p>
+</div>
+<div class="records-actions">
+<button class="secondary-button" id="refreshDataButton" type="button">刷新数据</button>
+<button class="danger-button" id="clearDataButton" type="button">清空数据</button>
+</div>
+</div>
+<div class="kpi-grid">
+<article class="kpi-card accent-blue">
+<span>完成训练</span><strong id="totalSessionsKpi">0</strong><small>次会话</small>
+<i>↗</i>
+</article>
+<article class="kpi-card accent-violet">
+<span>累计试次</span><strong id="totalTrialsKpi">0</strong><small>次判断</small>
+<i>∑</i>
+</article>
+<article class="kpi-card accent-cyan">
+<span>平均正确率</span><strong id="accuracyKpi">—</strong><small>全部已完成训练</small>
+<i>◎</i>
+</article>
+<article class="kpi-card accent-orange">
+<span>累计时长</span><strong id="durationKpi">0</strong><small>分钟</small>
+<i>◷</i>
+</article>
+</div>
+<section class="panel current-difficulty-panel">
+<div class="panel-heading">
+<div><span class="section-kicker">ADAPTIVE LEVELS</span><h3>当前累计难度</h3></div>
+<span class="subtle-badge">0–100 · 越高越难</span>
+</div>
+<div class="current-difficulty-grid" id="currentDifficultyGrid"></div>
+</section>
+<div class="dashboard-grid">
+<section class="panel trend-panel">
+<div class="panel-heading">
+<div><span class="section-kicker">ACCURACY TREND</span><h3>正确率趋势</h3></div>
+<span class="subtle-badge">最近 12 次</span>
+</div>
+<div class="chart-wrap" id="accuracyChart"></div>
+</section>
+<section class="panel mode-summary-panel">
+<div class="panel-heading">
+<div><span class="section-kicker">MODE SUMMARY</span><h3>各模式表现</h3></div>
+</div>
+<div class="mode-bars" id="modeSummary"></div>
+</section>
+</div>
+<section class="panel sessions-panel">
+<div class="panel-heading sessions-heading">
+<div><span class="section-kicker">SESSION HISTORY</span><h3>训练会话记录</h3></div>
+<label class="search-field">
+<span aria-hidden="true">⌕</span>
+<input id="sessionSearch" placeholder="搜索模式或日期" type="search"/>
+</label>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>开始时间</th><th>训练模式</th><th>完成情况</th><th>正确率</th><th>训练时长</th><th>最终阈值</th><th></th></tr></thead>
+<tbody id="sessionsTableBody"></tbody>
+</table>
+<div class="empty-state" id="recordsEmptyState">
+<span>▥</span><h3>还没有训练数据</h3><p>完成一次视觉训练后，会话和试次数据会显示在这里。</p>
+<a href="#/mobile">开始第一次训练</a>
+</div>
+</div>
+<div aria-label="训练会话分页" class="pagination" id="sessionsPagination"></div>
+</section>
+<section class="panel difficulty-trends-panel">
+<div class="panel-heading">
+<div><span class="section-kicker">DIFFICULTY HISTORY</span><h3>累计难度变化曲线</h3></div>
+<span class="subtle-badge">纵轴为等效难度阶数 · 越高越难</span>
+</div>
+<div class="difficulty-trends-grid" id="difficultyTrendsGrid"></div>
+</section>
+<section class="panel trial-detail-panel hidden" id="trialDetailPanel">
+<div class="panel-heading">
+<div><span class="section-kicker">TRIAL DETAILS</span><h3 id="trialDetailTitle">试次明细</h3></div>
+<button aria-label="关闭明细" class="icon-button" id="closeTrialDetail" type="button">×</button>
+</div>
+<div class="table-wrap compact-table">
+<table>
+<thead><tr><th>#</th><th>模式</th><th>答案</th><th>结果</th><th>反应时间</th><th>训练参数</th></tr></thead>
+<tbody id="trialsTableBody"></tbody>
+</table>
+</div>
+</section>
+</section></main>
+<div aria-live="polite" class="toast-region" id="toastRegion"></div>
+<script src="./js/compat.js"></script><script src="./js/gabor.js"></script><script src="./js/storage.js"></script><script src="./js/training.js"></script><script src="./js/records.js"></script><script src="./js/app.js"></script></body></html>

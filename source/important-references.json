@@ -1,0 +1,162 @@
+[
+  {
+    "doi": "10.1136/bjo.62.11.748",
+    "authors": "Campbell 等",
+    "year": "1978",
+    "journal": "British Journal of Ophthalmology",
+    "title": "Preliminary results of a physiologically based treatment of amblyopia.",
+    "note": "CAM 光栅刺激治疗弱视的早期探索。"
+  },
+  {
+    "doi": "10.1136/bjo.64.8.607",
+    "authors": "Ciuffreda 等",
+    "year": "1980",
+    "journal": "British Journal of Ophthalmology",
+    "title": "Lack of positive results of a physiologically based treatment of amblyopia.",
+    "note": "短时光栅刺激的重复验证；未发现明确的即时视力获益。"
+  },
+  {
+    "doi": "10.1038/s41598-021-90936-7",
+    "authors": "Yeh 等",
+    "year": "2021",
+    "journal": "Scientific Reports",
+    "title": "Portable rotating grating stimulation for anisometropic amblyopia with 6 months training",
+    "note": "儿童屈光参差性弱视：平板旋转光栅结合描图、遮盖训练，随访六个月。"
+  },
+  {
+    "doi": "10.1080/09273972.2024.2353153",
+    "authors": "Khorrami-Nejad 等",
+    "year": "2024",
+    "journal": "Strabismus",
+    "title": "Comparison of Cambridge vision stimulator (CAM) therapy with passive occlusion therapy in the management of unilateral amblyopia; a randomized clinical trial",
+    "note": "儿童随机试验：比较 CAM 与遮盖治疗，整体组间差异不显著。"
+  },
+  {
+    "doi": "10.1080/09273972.2025.2579178",
+    "authors": "Bodur 等",
+    "year": "2026（2025 年在线发表）",
+    "journal": "Strabismus",
+    "title": "Evaluation of the effectiveness of Cambridge Visual Stimulator treatment in amblyopia patients: a retrospective study",
+    "note": "儿童回顾性研究：在遮盖基础上加入 CAM，未发现显著的额外视力获益。"
+  },
+  {
+    "doi": "10.1073/pnas.0401200101",
+    "authors": "Polat 等",
+    "year": "2004",
+    "journal": "PNAS",
+    "title": "Improving vision in adult amblyopia by perceptual learning",
+    "note": "成人弱视的知觉学习研究，涉及对比敏感度及字母识别能力的改善。"
+  },
+  {
+    "doi": "10.1016/j.visres.2009.02.010",
+    "authors": "Levi 与 Li",
+    "year": "2009",
+    "journal": "Vision Research",
+    "title": "Perceptual learning as a potential treatment for amblyopia: a mini-review.",
+    "note": "知觉学习综述：训练迁移、效果保持和可能机制。"
+  },
+  {
+    "doi": "10.1167/9.11.24",
+    "authors": "Huang 等",
+    "year": "2009",
+    "journal": "Journal of Vision",
+    "title": "Mechanisms underlying perceptual learning of contrast detection in adults with anisometropic amblyopia",
+    "note": "成人屈光参差性弱视的对比检测学习机制。"
+  },
+  {
+    "doi": "10.1167/4.6.7",
+    "authors": "Li 与 Levi",
+    "year": "2004",
+    "journal": "Journal of Vision",
+    "title": "Characterizing the mechanisms of improvement for position discrimination in adult amblyopia",
+    "note": "成人弱视的位置辨别训练及改善机制。"
+  },
+  {
+    "doi": "10.1038/s41467-018-06698-w",
+    "authors": "Sanayei 等",
+    "year": "2018",
+    "journal": "Nature Communications",
+    "title": "Perceptual learning of fine contrast discrimination changes neuronal tuning and population coding in macaque V4",
+    "note": "猕猴 V4 的精细对比辨别与神经编码研究；属于基础机制研究，并非弱视临床试验。"
+  },
+  {
+    "doi": "10.1167/tvst.13.1.16",
+    "authors": "Zhou 等",
+    "year": "2024",
+    "journal": "Translational Vision Science & Technology",
+    "title": "Perceptual Learning Based on the Lateral Masking Paradigm in Anisometropic Amblyopia With or Without a Patching History",
+    "note": "单眼 Gabor 侧向遮蔽训练，比较有无既往遮盖治疗史的屈光参差性弱视患者。"
+  },
+  {
+    "doi": "10.1371/journal.pbio.1001135",
+    "authors": "Li RW 等",
+    "year": "2011",
+    "journal": "PLOS Biology",
+    "title": "Video-game play induces plasticity in the visual system of adults with amblyopia.",
+    "note": "以成人为主的电子游戏训练探索；样本较小，未随机分组。"
+  },
+  {
+    "doi": "10.1016/j.cub.2013.01.059",
+    "authors": "Li J 等",
+    "year": "2013",
+    "journal": "Current Biology",
+    "title": "Dichoptic training enables the adult amblyopic brain to learn",
+    "note": "成人弱视的双眼分视训练，探讨减轻眼间抑制与视觉学习的关系。"
+  },
+  {
+    "doi": "10.1038/srep08482",
+    "authors": "Vedamurthy 等",
+    "year": "2015",
+    "journal": "Scientific Reports",
+    "title": "Mechanisms of recovery of visual function in adult amblyopia through a tailored action video game",
+    "note": "定制动作电子游戏用于成人弱视，研究视觉功能恢复的机制。"
+  },
+  {
+    "doi": "10.1016/j.visres.2015.01.002",
+    "authors": "Levi、Knill 与 Bavelier",
+    "year": "2015",
+    "journal": "Vision Research",
+    "title": "Stereopsis and amblyopia: A mini-review.",
+    "note": "立体视觉与弱视综述，讨论单眼、双眼分视及立体视训练。"
+  },
+  {
+    "doi": "10.1016/j.jaapos.2015.08.003",
+    "authors": "Li SL 等",
+    "year": "2015",
+    "journal": "Journal of AAPOS",
+    "title": "Dichoptic movie viewing treats childhood amblyopia.",
+    "note": "8 名弱视儿童的双眼分视电影先导研究。"
+  },
+  {
+    "doi": "10.1001/jamaophthalmol.2016.4262",
+    "authors": "Holmes 等",
+    "year": "2016",
+    "journal": "JAMA Ophthalmology",
+    "title": "Effect of a Binocular iPad Game vs Part-time Patching in Children Aged 5 to 12 Years With Amblyopia",
+    "note": "儿童多中心随机试验：比较双眼 iPad 游戏与部分时间遮盖，未确立游戏治疗的非劣效性。"
+  },
+  {
+    "doi": "10.1001/jamaophthalmol.2017.6090",
+    "authors": "Gao 等",
+    "year": "2018",
+    "journal": "JAMA Ophthalmology",
+    "title": "Effectiveness of a Binocular Video Game vs Placebo Video Game for Improving Visual Functions in Older Children, Teenagers, and Adults With Amblyopia",
+    "note": "包含儿童、青少年和成人的随机试验：所测双眼游戏未优于安慰剂游戏。"
+  },
+  {
+    "doi": "10.1001/archopht.123.4.437",
+    "authors": "Scheiman 等",
+    "year": "2005",
+    "journal": "Archives of Ophthalmology",
+    "title": "Randomized trial of treatment of amblyopia in children aged 7 to 17 years.",
+    "note": "7–17 岁弱视患者的随机试验，比较配镜与增加遮盖等治疗的效果。"
+  },
+  {
+    "doi": "10.1016/j.visres.2020.07.014",
+    "authors": "Levi",
+    "year": "2020",
+    "journal": "Vision Research",
+    "title": "Rethinking amblyopia 2020.",
+    "note": "综述弱视的神经可塑性、双眼机制，以及新疗法在实验室和临床试验中的不同结果。"
+  }
+]

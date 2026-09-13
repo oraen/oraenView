@@ -1,0 +1,70 @@
+/* Chrome 61 baseline: no container units, flex gap or native fullscreen. */
+html, body { height: 100%; min-width: 0; }
+body { -webkit-font-smoothing: antialiased; -webkit-touch-callout: none; }
+button { touch-action: manipulation; }
+button:active { opacity: .8; }
+button:focus, a:focus { outline: 2px solid #829af0; outline-offset: 3px; }
+.page { animation: none; }
+.page-container { padding: 24px 20px 40px; max-width: 760px; margin: 0 auto; }
+.tool-header { padding: 16px 20px; padding-top: calc(16px + var(--safe-area-inset-top, 0px)); background: #fff; border-bottom: 1px solid #e5e9f2; }
+.tool-header strong { font-size: 18px; }
+.tool-header span { margin-left: 10px; color: #71809f; font-size: 11px; }
+.tool-nav { display: flex; padding: 10px 20px; background: #fff; }
+.tool-nav button { flex: 1; padding: 12px; border: 0; border-radius: 9px; color: #657181; background: #f4f6fa; }
+.tool-nav button + button { margin-left: 10px; }
+.tool-nav button[aria-pressed="true"] { color: #fff; background: #4968ff; }
+.mobile-page { max-width: 560px; }
+.mobile-intro p { font-size: 15px; }
+.mobile-mode-list { display: block; }
+.mobile-mode-list button { width: 100%; min-height: 62px; }
+.mobile-mode-list button + button { margin-top: 10px; }
+.mobile-mode-list button span { margin-left: 10px; }
+.mobile-page .trainer-toolbar { display: block; }
+.mobile-page .trainer-toolbar > div:first-child { display: grid; grid-template-columns: 1fr auto; grid-gap: 5px; }
+.mobile-page .trainer-metrics { margin-top: 10px; }
+.mobile-page .response-buttons { display: grid; grid-template-columns: 1fr 1fr; grid-gap: 8px; }
+.mobile-page .response-buttons kbd { margin-right: 8px; }
+.mobile-page .response-area > p { min-height: 4.5em; }
+.mobile-page .response-area { flex-shrink: 0; padding-bottom: 12px; padding-bottom: calc(12px + var(--safe-area-inset-bottom, 0px)); }
+.mobile-page .stimulus-stage { min-height: 280px; }
+.mobile-page canvas { width: 100%; height: auto; }
+.mobile-author-card { display: flex; grid-gap: 0; }
+.mobile-author-card img { margin-right: 16px; }
+.mobile-author-card div { min-width: 0; }
+body.mobile-training-focus [data-mobile="trainerPanel"] { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 200; display: flex; flex-direction: column; height: 100%; width: 100%; border: 0; border-radius: 0; background: rgb(158,158,158); padding-top: 0; padding-top: var(--safe-area-inset-top, 0px); padding-left: var(--safe-area-inset-left, 0px); padding-right: var(--safe-area-inset-right, 0px); }
+@supports (padding-top: env(safe-area-inset-top)) {
+  .tool-header { padding-top: calc(16px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px))); }
+  .mobile-page .response-area { padding-bottom: calc(12px + var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))); }
+  body.mobile-training-focus [data-mobile="trainerPanel"] { padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); padding-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px)); padding-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px)); }
+}
+body.mobile-training-focus .mobile-page .trainer-toolbar { flex-shrink: 0; }
+body.mobile-training-focus .mobile-page .progress-track { flex-shrink: 0; }
+body.mobile-training-focus .mobile-page .stimulus-stage { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: center; }
+body.mobile-training-focus .mobile-page canvas { flex-shrink: 0; max-width: 100%; }
+.stage-message { top: 0; right: 0; bottom: 0; left: 0; }
+.records-header { display: block; }
+.records-actions { margin-top: 15px; display: flex; grid-gap: 0; }
+.records-actions button { flex: 1; }
+.records-actions button + button { margin-left: 10px; }
+.kpi-grid { grid-template-columns: 1fr 1fr; }
+.current-difficulty-grid { grid-template-columns: 1fr 1fr; }
+.dashboard-grid, .difficulty-trends-grid { grid-template-columns: 1fr; }
+.panel-heading { flex-wrap: wrap; }
+.panel-heading > * + * { margin-top: 8px; }
+.sessions-heading { display: block; }
+.sessions-heading .search-field { margin-top: 12px; }
+.pagination { display: block; }
+.pagination > div { display: flex; grid-gap: 0; max-width: 100%; overflow-x: auto; margin-top: 8px; }
+.pagination button + button { margin-left: 6px; }
+.table-wrap { min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.toast-region { max-width: 90%; }
+.toast { min-width: 0; margin-top: 8px; }
+.consent-overlay { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 400; display: flex; align-items: center; justify-content: center; background: rgba(17,28,68,.5); padding: 20px; }
+.consent-card { width: 100%; max-width: 560px; max-height: 90%; overflow-y: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; padding: 22px; background: #fff; }
+.consent-card h2 { font-size: 22px; margin-top: 0; }
+.consent-card .agreement-text { padding: 0; line-height: 1.7; font-size: 14px; }
+.consent-card label { font-size: 14px; line-height: 1.6; }
+.consent-card button { width: 100%; min-height: 46px; }
+body.consent-open { overflow: hidden; }
+
+.tool-site-caption { margin: 12px 0 24px; color: #9299a5; font-size: 12px; text-align: center; }

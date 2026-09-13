@@ -25,6 +25,12 @@ npm start
 
 电脑版点击开始后页面会先进入全屏预备模式并隐藏菜单，再按一次鼠标左键才正式开始计时和出题；训练完成后自动恢复，按 `Esc` 会结束当前训练并退出全屏。
 
+## 网站构建与发布
+
+运行 `npm run build`，网站文件会生成到 `dist/public`。构建只复制 `public`，并排除其中名为 `xhs` 的目录；根目录的 `xhs` 小红书小工具目录不会进入网站产物。
+
+服务器发布时只打包 `dist` 内的 `public` 目录，不上传整个项目。`dist` 是可重新生成的构建目录，每次构建都会清空；`xhs` 可正常纳入 Git 管理。
+
 ## 数据结构
 
 电脑版 IndexedDB 数据库名为 `oraenViewDB`，首次运行会自动迁移旧版本的本地记录。数据库包含：
@@ -75,3 +81,45 @@ npm start
 当然使用上的疑问可以问作者， [oraen1998@gmail.com](mailto:oraen1998@gmail.com)，小红书：慢手（ID：49624205605）。
 
 <!-- ABOUT_PROJECT_END -->
+
+## 重要参考文献
+
+1. Campbell 等，1978，British Journal of Ophthalmology。[Preliminary results of a physiologically based treatment of amblyopia.](https://doi.org/10.1136/bjo.62.11.748)
+
+2. Ciuffreda 等，1980，British Journal of Ophthalmology。[Lack of positive results of a physiologically based treatment of amblyopia.](https://doi.org/10.1136/bjo.64.8.607)
+
+3. Yeh 等，2021，Scientific Reports。[Portable rotating grating stimulation for anisometropic amblyopia with 6 months training](https://doi.org/10.1038/s41598-021-90936-7)
+
+4. Khorrami-Nejad 等，2024，Strabismus。[Comparison of Cambridge vision stimulator (CAM) therapy with passive occlusion therapy in the management of unilateral amblyopia; a randomized clinical trial](https://doi.org/10.1080/09273972.2024.2353153)
+
+5. Bodur 等，2026（2025 年在线发表），Strabismus。[Evaluation of the effectiveness of Cambridge Visual Stimulator treatment in amblyopia patients: a retrospective study](https://doi.org/10.1080/09273972.2025.2579178)
+
+6. Polat 等，2004，PNAS。[Improving vision in adult amblyopia by perceptual learning](https://doi.org/10.1073/pnas.0401200101)
+
+7. Levi 与 Li，2009，Vision Research。[Perceptual learning as a potential treatment for amblyopia: a mini-review.](https://doi.org/10.1016/j.visres.2009.02.010)
+
+8. Huang 等，2009，Journal of Vision。[Mechanisms underlying perceptual learning of contrast detection in adults with anisometropic amblyopia](https://doi.org/10.1167/9.11.24)
+
+9. Li 与 Levi，2004，Journal of Vision。[Characterizing the mechanisms of improvement for position discrimination in adult amblyopia](https://doi.org/10.1167/4.6.7)
+
+10. Sanayei 等，2018，Nature Communications。[Perceptual learning of fine contrast discrimination changes neuronal tuning and population coding in macaque V4](https://doi.org/10.1038/s41467-018-06698-w)
+
+11. Zhou 等，2024，Translational Vision Science & Technology。[Perceptual Learning Based on the Lateral Masking Paradigm in Anisometropic Amblyopia With or Without a Patching History](https://doi.org/10.1167/tvst.13.1.16)
+
+12. Li RW 等，2011，PLOS Biology。[Video-game play induces plasticity in the visual system of adults with amblyopia.](https://doi.org/10.1371/journal.pbio.1001135)
+
+13. Li J 等，2013，Current Biology。[Dichoptic training enables the adult amblyopic brain to learn](https://doi.org/10.1016/j.cub.2013.01.059)
+
+14. Vedamurthy 等，2015，Scientific Reports。[Mechanisms of recovery of visual function in adult amblyopia through a tailored action video game](https://doi.org/10.1038/srep08482)
+
+15. Levi、Knill 与 Bavelier，2015，Vision Research。[Stereopsis and amblyopia: A mini-review.](https://doi.org/10.1016/j.visres.2015.01.002)
+
+16. Li SL 等，2015，Journal of AAPOS。[Dichoptic movie viewing treats childhood amblyopia.](https://doi.org/10.1016/j.jaapos.2015.08.003)
+
+17. Holmes 等，2016，JAMA Ophthalmology。[Effect of a Binocular iPad Game vs Part-time Patching in Children Aged 5 to 12 Years With Amblyopia](https://doi.org/10.1001/jamaophthalmol.2016.4262)
+
+18. Gao 等，2018，JAMA Ophthalmology。[Effectiveness of a Binocular Video Game vs Placebo Video Game for Improving Visual Functions in Older Children, Teenagers, and Adults With Amblyopia](https://doi.org/10.1001/jamaophthalmol.2017.6090)
+
+19. Scheiman 等，2005，Archives of Ophthalmology。[Randomized trial of treatment of amblyopia in children aged 7 to 17 years.](https://doi.org/10.1001/archopht.123.4.437)
+
+20. Levi，2020，Vision Research。[Rethinking amblyopia 2020.](https://doi.org/10.1016/j.visres.2020.07.014)
