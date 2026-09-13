@@ -217,9 +217,7 @@
 
         <section class="page mobile-page" id="mobilePage" data-page="mobile" aria-labelledby="mobileHeading">
           <div class="mobile-intro"><h2 id="mobileHeading">掌上训练</h2>
-            <p>选好模式就开始，单项 64 题；综合训练每项 64 题，共 256 题。看到作答提示后，点击下方的左键或右键。</p>
             <p>每次尽量保持相同的屏幕尺寸、观看距离和光线，距离屏幕最好半米以上。双眼训练，无需遮盖；平时戴眼镜的话，训练时也请戴上。</p>
-            <small>掌上训练的记录和难度单独保存，不会影响电脑版。</small>
           </div>
           <div class="mobile-mode-list"><button type="button" data-mobile-mode="mixed"><strong>综合训练</strong><span>四种模式，各 64 次 →</span></button>
 <button type="button" data-mobile-mode="single"><strong>单图训练</strong><span>选出有图像的那一帧 →</span></button>
@@ -236,7 +234,7 @@
                 </div>
                 <div class="trainer-metrics">
                   <span><small>进度</small><b data-mobile="progressText">0 / 64</b></span>
-                  <span><small>正确</small><b data-mobile="correctText">0</b></span>
+                  <span><small>正确率</small><b data-mobile="correctText">—</b></span>
                   <span><small>当前阈值</small><b data-mobile="thresholdText">—</b></span>
                 </div>
               </div>
@@ -264,6 +262,10 @@
               </div>
             </section>
           <button type="button" class="primary-button hidden" data-mobile="startButton"><span>再训练一次</span></button>
+          <a class="mobile-author-card" href="https://www.xiaohongshu.com/user/profile/687b5c52000000001d009b80" target="_blank" rel="noopener noreferrer" aria-label="查看开发者慢手的小红书主页（新窗口打开）">
+            <img src="/images/author-avatar.jpg" alt="开发者慢手的头像" width="64" height="64">
+            <div><small>开发者</small><p>小红书：慢手</p><span>ID：49624205605</span></div>
+          </a>
         </section>
 
         <section class="page" id="testingPage" data-page="testing" aria-labelledby="testingHeading">
@@ -570,12 +572,11 @@
 
             <p>说到底，作者也是一个想办法自救的弱视患者，自己没有医疗资质。只能对自己分享的经历和信息的真实性负责，没办法保证训练效果。 这也是项目开源免费的其中一个原因</p>
 
-            <p>当然使用上的疑问可以问作者， <a href="mailto:oraen1998@gmail.com">oraen1998@gmail.com</a>，小红书：慢手（ID：49624205605）。</p>
-
             <p><button class="agreement-link" id="reviewAgreement" type="button">查看使用协议</button></p>
-            <footer class="about-signature">
-              <img src="/images/author-manshou.jpg" width="80" height="80" alt="慢手的兔子头像" loading="lazy" decoding="async">
-            </footer>
+            <a class="mobile-author-card" href="https://www.xiaohongshu.com/user/profile/687b5c52000000001d009b80" target="_blank" rel="noopener noreferrer" aria-label="查看开发者慢手的小红书主页（新窗口打开）">
+              <img src="/images/author-avatar.jpg" alt="开发者慢手的头像" width="64" height="64" loading="lazy">
+              <div><small>开发者</small><p>小红书：慢手</p><span>ID：49624205605</span></div>
+            </a>
           </article>
         </section>
       </main>

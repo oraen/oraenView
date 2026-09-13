@@ -40,6 +40,17 @@ export class MobileTrainingController extends TrainingController {
   }
 
   configuredTrialCount() { return 64; }
+
+  updateMetrics() {
+    super.updateMetrics();
+    this.elements.correctText.textContent = this.trials.length
+      ? `${Math.round(this.correctCount / this.trials.length * 100)}%` : "—";
+  }
+
+  enterResponseState() {
+    super.enterResponseState();
+    this.elements.responsePrompt.textContent += "\n如果看不清楚凭感觉猜即可";
+  }
   lockSetup(locked) {
     this.elements.modeCards.forEach((button) => { button.disabled = locked; });
     this.elements.startButton.disabled = locked;
@@ -90,6 +101,8 @@ export class MobileTrainingController extends TrainingController {
 
   async completeSession() {
     await super.completeSession();
+    this.elements.status.textContent = "上次训练记录";
+    this.elements.stageMessage.querySelector("h3").textContent = "上次训练记录";
     this.elements.startButton.classList.remove("hidden");
     this.elements.stageMessage.querySelector("p").textContent = `完成 ${this.trials.length} 次，正确率 ${Math.round(this.session.accuracy * 100)}%。掌上训练记录已保存。`;
   }

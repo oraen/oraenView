@@ -57,7 +57,7 @@ test("touch sessions complete all five modes and records stay separated after re
     for (let i = 0; i < count; i++) {
       await page.locator('[data-mobile="temporalButtons"] button').nth(i % 2).tap();
     }
-    await expect(page.locator('[data-mobile="stageMessage"] h3')).toHaveText("本次训练已完成");
+    await expect(page.locator('[data-mobile="stageMessage"] h3')).toHaveText("上次训练记录");
     await expect(page.locator('[data-mobile="progressText"]')).toHaveText(`${count} / ${count}`);
   }
   const data = await page.evaluate(async () => {
