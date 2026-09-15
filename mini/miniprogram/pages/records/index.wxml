@@ -1,0 +1,35 @@
+<view class="page-shell">
+  <view class="records-head"><view><view class="eyebrow">LOCAL TRAINING DATA</view><view class="page-title">训练数据</view></view><button class="clear" bindtap="clearData">清空数据</button></view>
+  <view class="page-copy">记录只保存在当前微信小程序中，不会上传。清理微信数据后记录可能丢失。</view>
+  <view class="kpis">
+    <view class="card"><text>完成训练</text><text class="kpi-value">{{totalSessions}}</text><text class="kpi-unit">次会话</text></view>
+    <view class="card"><text>累计试次</text><text class="kpi-value">{{totalTrials}}</text><text class="kpi-unit">次判断</text></view>
+    <view class="card"><text>平均正确率</text><text class="kpi-value">{{accuracy}}</text><text class="kpi-unit">全部训练</text></view>
+    <view class="card"><text>累计时长</text><text class="kpi-value">{{duration}}</text><text class="kpi-unit">分钟</text></view>
+  </view>
+  <view class="panel card">
+    <view class="section-title">当前累计难度</view><view class="subtle">数值越低越难，阶数越高越难</view>
+    <view class="levels"><view class="level" wx:for="{{levelCards}}" wx:key="mode"><view><text class="level-name">{{item.label}}</text><text>{{item.stage}}</text></view><text class="level-value">{{item.value}}</text><text class="level-description">{{item.description}}</text></view></view>
+  </view>
+  <view class="panel card"><view class="section-title">正确率趋势</view><canvas id="accuracyChart" type="2d" class="chart"></canvas></view>
+  <view class="panel card">
+    <view class="section-title">各模式表现</view>
+    <view class="mode-row" wx:for="{{modeSummary}}" wx:key="mode"><view><text class="mode-name">{{item.label}}</text><text>{{item.text}}</text></view><view class="bar"><view style="width:{{item.rate}}%"></view></view></view>
+  </view>
+  <view class="panel card">
+    <view class="section-title">累计难度变化曲线</view>
+    <view class="trend" wx:for="{{levelCards}}" wx:key="mode"><view><text class="trend-name">{{item.label}}</text><text>{{item.stage}}</text></view><canvas id="trend-{{item.mode}}" type="2d" class="trend-chart"></canvas></view>
+  </view>
+  <view class="panel card history">
+    <view class="section-title">训练会话记录</view>
+    <view wx:if="{{!hasData}}" class="empty">还没有训练数据</view>
+    <view class="session" wx:for="{{sessions}}" wx:key="id" data-id="{{item.id}}" bindtap="showDetails">
+      <view><text class="session-name">{{item.mode}}</text><text>{{item.date}}</text></view><view><text class="session-rate">{{item.accuracy}}</text><text class="{{item.completeClass}}">{{item.status}} · {{item.progress}}</text></view>
+    </view>
+  </view>
+</view>
+<view wx:if="{{detail}}" class="detail-mask" bindtap="closeDetails">
+  <view class="detail-sheet" catchtap="noop"><view class="detail-head"><text class="detail-title">{{detail.title}}</text><button bindtap="closeDetails">×</button></view>
+    <scroll-view scroll-y class="trial-scroll"><view class="trial" wx:for="{{detail.trials}}" wx:key="number"><text>#{{item.number}} · {{item.mode}}</text><text class="trial-result {{item.resultClass}}">{{item.result}}</text><text class="trial-meta">{{item.answer}} · {{item.reaction}}</text><text class="trial-meta">{{item.level}}</text></view></scroll-view>
+  </view>
+</view>

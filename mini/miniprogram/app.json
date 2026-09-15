@@ -1,0 +1,22 @@
+{
+  "pages": ["pages/mobile/index", "pages/records/index", "pages/training/index"],
+  "window": {
+    "navigationBarBackgroundColor": "#101b43",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "开源视觉",
+    "backgroundColor": "#f4f6fa",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#7b8495",
+    "selectedColor": "#3158df",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/mobile/index", "text": "掌上训练" },
+      { "pagePath": "pages/records/index", "text": "训练数据" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

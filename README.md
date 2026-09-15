@@ -6,6 +6,12 @@
 # Oraen View
 一个基于 Gabor 刺激、视觉知觉学习和自适应阈值测量的浏览器研究原型。
 
+## 官方小程序
+
+<img src="public/images/official-mini-program.png" alt="开源视觉官方微信小程序码" width="220">
+
+使用微信扫码打开“开源视觉”官方小程序，快速开始训练。
+
 当前包含六个页面：
 
 - **视觉训练**：单图、三图、清晰图、移图和综合训练；使用独立的 2-down/1-up 自适应难度，并跨已完成的训练继承各模式阈值。
@@ -64,7 +70,7 @@ npm start
 
 在发现市场上治疗弱视的软件都需要上万块钱之后，为了治疗弱视，他决定...
 
-当然使用上的疑问可以问作者， [oraen1998@gmail.com](mailto:oraen1998@gmail.com)，小红书：慢手（ID：49624205605）。
+联系作者： [oraen1998@gmail.com](mailto:oraen1998@gmail.com)，小红书：慢手（ID：49624205605）。
 
 <!-- ABOUT_PROJECT_END -->
 

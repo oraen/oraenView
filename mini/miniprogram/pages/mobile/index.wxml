@@ -1,0 +1,28 @@
+<view class="page-shell">
+  <view class="eyebrow">ORAEN VIEW</view>
+  <view class="page-title">掌上训练</view>
+  <view class="page-copy">每次尽量保持相同的屏幕尺寸、观看距离和光线，距离屏幕最好半米以上。双眼训练，无需遮盖；平时戴眼镜的话，训练时也请戴上。</view>
+
+  <view class="mode-list">
+    <button class="mode-card card" wx:for="{{modes}}" wx:key="key" data-mode="{{item.key}}" bindtap="startTraining">
+      <view><text class="mode-title">{{item.label}}</text><text class="mode-caption">{{item.caption}}</text></view><text class="arrow">→</text>
+    </button>
+  </view>
+  <view class="pro-site">专业版：view.oraen.com</view>
+
+  <view class="last-card card">
+    <view class="last-heading">上次训练记录</view>
+    <view wx:if="{{lastRecord}}" class="last-values">
+      <view><text>{{lastRecord.mode}}</text><text class="last-label">训练模式</text></view>
+      <view><text>{{lastRecord.accuracy}}%</text><text class="last-label">正确率</text></view>
+      <view><text>{{lastRecord.trials}}</text><text class="last-label">完成试次</text></view>
+    </view>
+    <view wx:else class="empty-copy">完成一次训练后，记录会显示在这里。</view>
+  </view>
+
+  <view class="author-card card">
+    <image src="/images/author-avatar.jpg" mode="aspectFill"></image>
+    <view><text class="author-label">开发者</text><text class="author-name">小红书：慢手</text><text class="author-id">ID：49624205605</text></view>
+  </view>
+  <view class="author-tip">可在小红书搜索 ID 找到作者</view>
+</view>

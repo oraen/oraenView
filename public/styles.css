@@ -334,6 +334,11 @@ body.testing-focus .toast-region { z-index: 300; }
 .mobile-author-card { display: flex; align-items: center; gap: 16px; margin-top: 28px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: inherit; text-decoration: none; }
 .mobile-author-card:hover, .mobile-author-card:focus-visible { border-color: var(--primary); }
 .about-article .mobile-author-card { color: var(--ink); text-decoration: none; }
+.official-miniprogram { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-top: 24px; padding: 24px 28px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(135deg, #f7f9ff, #fff); }
+.official-miniprogram > div > span { color: var(--primary); font-size: 10px; font-weight: 700; letter-spacing: .12em; }
+.official-miniprogram h3 { margin: 7px 0 9px; font-size: 20px; }
+.official-miniprogram p { max-width: 440px; margin: 0; color: #657181; font-size: 14px; line-height: 1.7; }
+.official-miniprogram img { flex: 0 0 180px; width: 180px; height: 180px; border-radius: 14px; background: #fff; object-fit: contain; }
 .about-references { margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--line); }
 .about-references h3 { margin: 0 0 14px; font-size: 22px; }
 .about-references > p { margin: 0 0 22px; color: #657181; font-size: 14px; line-height: 1.8; }
@@ -344,6 +349,10 @@ body.testing-focus .toast-region { z-index: 300; }
 .mobile-author-card img { flex: 0 0 64px; border-radius: 50%; object-fit: cover; }
 .mobile-author-card small, .mobile-author-card span { color: #657181; font-size: 12px; }
 .mobile-author-card p { margin: 5px 0; font-size: 15px; font-weight: 600; }
+@media (max-width: 560px) {
+  .official-miniprogram { align-items: flex-start; padding: 22px; }
+  .official-miniprogram img { flex-basis: 128px; width: 128px; height: 128px; }
+}
 .mobile-page .temporal-buttons { display: grid; grid-template-columns: 1fr 1fr; pointer-events: auto; }
 .mobile-page .response-buttons button { min-width: 0; min-height: 64px; font-size: 16px; pointer-events: auto; touch-action: manipulation; user-select: none; }
 .mobile-page .response-buttons kbd { font: inherit; border: 0; box-shadow: none; }

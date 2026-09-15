@@ -1,0 +1,24 @@
+<view class="training-page">
+  <view class="toolbar">
+    <view><view class="status-dot"></view><text>{{status}}</text><text class="mode">{{modeLabel}}</text></view>
+    <button class="exit" bindtap="finish">{{completed ? '查看数据' : '结束训练'}}</button>
+  </view>
+  <view class="metrics">
+    <view><text class="metric-label">进度</text><text>{{progress}}</text></view><view><text class="metric-label">正确率</text><text>{{accuracy}}</text></view><view><text class="metric-label">当前阈值</text><text>{{threshold}}</text></view>
+  </view>
+  <view class="track"><view style="width:{{progressWidth}}%"></view></view>
+  <view class="stage">
+    <canvas id="stimulusCanvas" canvas-id="stimulusCanvas" type="2d" class="canvas"></canvas>
+    <view wx:if="{{showFixation}}" class="fixation"></view>
+    <view wx:if="{{intervalLabel}}" class="interval">{{intervalLabel}}</view>
+    <view wx:if="{{feedback}}" class="feedback {{feedbackClass}}">{{feedback}}</view>
+    <view wx:if="{{completed}}" class="finished"><text class="finished-title">本次训练已完成</text><text>{{resultText}}</text></view>
+  </view>
+  <view class="response">
+    <text class="prompt">{{prompt}}</text>
+    <view class="buttons">
+      <button disabled="{{!canAnswer}}" data-side="left" bindtap="answer"><text class="button-key">左键</text><text>{{leftLabel}}</text></button>
+      <button disabled="{{!canAnswer}}" data-side="right" bindtap="answer"><text class="button-key">右键</text><text>{{rightLabel}}</text></button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,23 @@
+.mode-list { margin-top: 34rpx; }
+.mode-card { width: 100%; min-height: 126rpx; margin: 18rpx 0; padding: 26rpx 28rpx; display: flex; align-items: center; justify-content: space-between; text-align: left; line-height: 1.4; }
+.mode-title, .mode-caption { display: block; }
+.mode-title { color: #111c44; font-size: 31rpx; font-weight: 750; }
+.mode-caption { margin-top: 8rpx; color: #778297; font-size: 24rpx; }
+.arrow { color: #3158df; font-size: 38rpx; }
+.pro-site { margin: 12rpx 0 34rpx; text-align: center; color: #9aa3b1; font-size: 23rpx; }
+.last-card { padding: 28rpx; }
+.last-heading { font-size: 29rpx; font-weight: 750; }
+.last-values { display: flex; margin-top: 24rpx; }
+.last-values view { flex: 1; }
+.last-values text { display: block; }
+.last-values text { font-size: 29rpx; font-weight: 750; }
+.last-values .last-label { margin-top: 6rpx; color: #8993a5; font-size: 21rpx; font-weight: 400; }
+.empty-copy { margin-top: 18rpx; color: #8993a5; font-size: 24rpx; }
+.author-card { width: 100%; margin: 28rpx 0 0; padding: 24rpx 26rpx; display: flex; align-items: center; text-align: left; line-height: 1.4; }
+.author-card image { flex: none; width: 92rpx; height: 92rpx; margin-right: 22rpx; border-radius: 50%; background: #f0f2f6; }
+.author-card view { flex: 1; }
+.author-card text { display: block; }
+.author-label { color: #8993a5; font-size: 21rpx; }
+.author-name { margin-top: 4rpx; color: #111c44; font-size: 28rpx; font-weight: 750; }
+.author-id { margin-top: 5rpx; color: #657181; font-size: 22rpx; }
+.author-tip { margin-top: 12rpx; text-align: center; color: #9aa3b1; font-size: 21rpx; }

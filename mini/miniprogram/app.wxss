@@ -1,0 +1,10 @@
+page { width: 100%; min-height: 100%; overflow-x: hidden; background: #f4f6fa; color: #111c44; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+view, button, image, canvas { box-sizing: border-box; }
+button::after { border: 0; }
+.page-shell { width: 100%; overflow-x: hidden; padding: 36rpx 28rpx calc(42rpx + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.eyebrow { color: #3158df; font-size: 21rpx; letter-spacing: 3rpx; font-weight: 700; }
+.page-title { margin: 10rpx 0 12rpx; font-size: 48rpx; font-weight: 800; line-height: 1.2; }
+.page-copy { color: #657181; font-size: 27rpx; line-height: 1.75; }
+.card { background: #fff; border: 1rpx solid #e0e6f0; border-radius: 28rpx; box-shadow: 0 14rpx 36rpx rgba(22, 39, 82, .06); }
+.section-title { margin: 0; font-size: 31rpx; font-weight: 750; }
+.subtle { color: #7a8598; font-size: 23rpx; }
