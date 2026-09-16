@@ -129,5 +129,18 @@ function drawBlank(canvas, background = 158) {
   clearCanvas(canvas, background);
 }
 
-window.ToolGabor = { drawBlank, drawSingle, drawTriple, drawShifted };
+function drawFrameBorder(canvas) {
+  const context = canvas.getContext("2d");
+  const thickness = Math.max(4, Math.round(Math.min(canvas.width, canvas.height) / 80));
+  context.save();
+  context.globalCompositeOperation = "source-over";
+  context.fillStyle = "rgb(240, 68, 68)";
+  context.fillRect(0, 0, canvas.width, thickness);
+  context.fillRect(0, canvas.height - thickness, canvas.width, thickness);
+  context.fillRect(0, thickness, thickness, canvas.height - thickness * 2);
+  context.fillRect(canvas.width - thickness, thickness, thickness, canvas.height - thickness * 2);
+  context.restore();
+}
+
+window.ToolGabor = { drawBlank, drawFrameBorder, drawSingle, drawTriple, drawShifted };
 })();

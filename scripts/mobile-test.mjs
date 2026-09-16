@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import "fake-indexeddb/auto";
 import * as desktop from "../public/js/db.js";
 import * as mobile from "../public/js/mobile-db.js";
+import { drawFrameBorder } from "../public/js/gabor.js";
 import { MobileTrainingController } from "../public/js/mobile-training.js";
 import { INITIAL_LEVELS, TrainingController } from "../public/js/training.js";
 import { isMobileDevice } from "../public/js/device.js";
@@ -40,6 +41,32 @@ test("both platforms get harder after two consecutive correct answers and easier
       assert.ok(controller.adaptLevel(mode, true) < easier);
     }
   }
+});
+
+test("web stimulus frame draws all four red edges inside the stimulus canvas", () => {
+  const rectangles = [];
+  const context = {
+    save() {},
+    restore() {},
+    fillRect(...values) { rectangles.push(values); },
+  };
+  drawFrameBorder({ width: 480, height: 480, getContext: () => context });
+  assert.deepEqual(rectangles, [
+    [0, 0, 480, 6],
+    [0, 474, 480, 6],
+    [0, 6, 6, 468],
+    [474, 6, 6, 468],
+  ]);
+  assert.equal(context.fillStyle, "rgb(240, 68, 68)");
+
+  rectangles.length = 0;
+  drawFrameBorder({ width: 960, height: 540, getContext: () => context }, 2);
+  assert.deepEqual(rectangles, [
+    [0, 0, 960, 2],
+    [0, 538, 960, 2],
+    [0, 2, 2, 536],
+    [958, 2, 2, 536],
+  ]);
 });
 
 test("mobile records, settings, export, retention and clearing cannot touch desktop data", async () => {

@@ -126,3 +126,18 @@ export function drawShifted(canvas, stimulus) {
 export function drawBlank(canvas, background = 158) {
   clearCanvas(canvas, background);
 }
+
+export function drawFrameBorder(canvas, requestedThickness) {
+  const context = canvas.getContext("2d");
+  const thickness = Number.isFinite(requestedThickness)
+    ? Math.max(1, Math.round(requestedThickness))
+    : Math.max(4, Math.round(Math.min(canvas.width, canvas.height) / 80));
+  context.save();
+  context.globalCompositeOperation = "source-over";
+  context.fillStyle = "rgb(240, 68, 68)";
+  context.fillRect(0, 0, canvas.width, thickness);
+  context.fillRect(0, canvas.height - thickness, canvas.width, thickness);
+  context.fillRect(0, thickness, thickness, canvas.height - thickness * 2);
+  context.fillRect(canvas.width - thickness, thickness, thickness, canvas.height - thickness * 2);
+  context.restore();
+}

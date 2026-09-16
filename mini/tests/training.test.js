@@ -19,6 +19,7 @@ test("trial answers and parameters match all four experiments", () => {
   engine.TASK_MODES.forEach((mode) => {
     const trial = engine.createTrial(mode, engine.INITIAL_LEVELS[mode], "session", 1);
     assert.equal(trial.mode, mode); assert.ok(trial.correctAnswer);
+    assert.ok(engine.STIMULUS_ORIENTATIONS.includes(trial.angle));
     if (mode === "triple") assert.equal(trial.spacing, 132);
     if (mode === "darker") assert.ok(trial.clearerContrast > trial.faintContrast);
     if (mode === "shifted") assert.ok(["left", "right", "up", "down"].includes(trial.correctAnswer));

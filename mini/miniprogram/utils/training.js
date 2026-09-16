@@ -6,6 +6,7 @@ const MODE_INFO = {
   shifted: { label: "移图训练", caption: "判断中间图像偏向哪边" },
 };
 const TASK_MODES = ["single", "triple", "darker", "shifted"];
+const STIMULUS_ORIENTATIONS = [0, 45, 90, 135];
 const INITIAL_LEVELS = { single: 0.24, triple: 0.19, darker: 0.10, shifted: 19 };
 const LEVEL_BOUNDS = { single: [0.0005, 0.55], triple: [0.0004, 0.48], darker: [0.002, 0.24], shifted: [0.5, 42] };
 const TIMING = { fixation: 650, interval: 430, gap: 330, shifted: 560, feedback: 520 };
@@ -15,7 +16,8 @@ function createId(prefix) { return prefix + "-" + Date.now().toString(36) + "-" 
 function buildSequence(mode) { if (mode !== "mixed") return Array(64).fill(mode); return [].concat.apply([], TASK_MODES.map((item) => Array(64).fill(item))); }
 function createTrial(mode, level, sessionId, trialNumber) {
   const layoutAngle = Math.random() < 0.5 ? 0 : 90;
-  const common = { id: createId("trial"), sessionId, trialNumber, mode, modeLabel: MODE_INFO[mode].label, levelBefore: round(level), layoutAngle, angle: layoutAngle === 90 ? 0 : 90, phase: Math.random() * Math.PI * 2, background: 158, sigma: 23, frequency: 0.047, createdAt: new Date().toISOString() };
+  const angle = STIMULUS_ORIENTATIONS[Math.floor(Math.random() * STIMULUS_ORIENTATIONS.length)];
+  const common = { id: createId("trial"), sessionId, trialNumber, mode, modeLabel: MODE_INFO[mode].label, levelBefore: round(level), layoutAngle, angle, phase: Math.random() * Math.PI * 2, background: 158, sigma: 23, frequency: 0.047, createdAt: new Date().toISOString() };
   if (mode === "single") return Object.assign(common, { correctAnswer: Math.random() < .5 ? "1" : "2", contrast: level });
   if (mode === "triple") return Object.assign(common, { correctAnswer: Math.random() < .5 ? "1" : "2", targetContrast: level, flankerContrast: .46, spacing: 132 });
   if (mode === "darker") { const base = .18; return Object.assign(common, { correctAnswer: Math.random() < .5 ? "1" : "2", contrastDelta: level, clearerContrast: clamp(base + level / 2, .03, .55), faintContrast: clamp(base - level / 2, .025, .5) }); }
@@ -41,4 +43,4 @@ function difficultyStage(mode, value) {
   return Math.max(0, Math.log(INITIAL_LEVELS[mode] / Number(value)) / Math.log(1 / multiplier));
 }
 function answerLabel(value) { return ({ "1": "第一帧", "2": "第二帧", left: "向左", right: "向右", up: "向上", down: "向下" })[value] || "—"; }
-module.exports = { MODE_INFO, TASK_MODES, INITIAL_LEVELS, LEVEL_BOUNDS, TIMING, round, createId, buildSequence, createTrial, adaptLevel, formatLevel, difficultyStage, answerLabel };
+module.exports = { MODE_INFO, TASK_MODES, STIMULUS_ORIENTATIONS, INITIAL_LEVELS, LEVEL_BOUNDS, TIMING, round, createId, buildSequence, createTrial, adaptLevel, formatLevel, difficultyStage, answerLabel };

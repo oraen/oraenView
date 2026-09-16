@@ -12,7 +12,7 @@ Page({
   },
   onLoad(options) {
     this.mode = engine.MODE_INFO[options.mode] ? options.mode : "mixed";
-    this.sequence = engine.buildSequence(this.mode); this.runToken = 1; this.index = 0; this.correctCount = 0; this.trials = [];
+    this.sequence = engine.buildSequence(this.mode); this.runToken = 1; this.index = 0; this.correctCount = 0; this.incorrectStreak = 0; this.trials = [];
     this.levels = Object.assign({}, engine.INITIAL_LEVELS, storage.getLevels()); this.streaks = { single: 0, triple: 0, darker: 0, shifted: 0 };
     this.setData({ modeLabel: engine.MODE_INFO[this.mode].label, progress: "0 / " + this.sequence.length });
   },
@@ -94,7 +94,9 @@ Page({
   },
   async handleAnswer(answer) {
     this.setData({ canAnswer: false }); const trial = this.trial, correct = answer === trial.correctAnswer;
-    if (correct) this.correctCount += 1;
+    if (correct) { this.correctCount += 1; this.incorrectStreak = 0; } else this.incorrectStreak += 1;
+    const showAttentionReminder = this.incorrectStreak >= 3;
+    if (showAttentionReminder) this.incorrectStreak = 0;
     const adapted = engine.adaptLevel(trial.mode, this.levels[trial.mode], correct, this.streaks[trial.mode]); this.levels[trial.mode] = adapted.value; this.streaks[trial.mode] = adapted.streak;
     const storedTrial = {
       id: trial.id, sessionId: trial.sessionId, trialNumber: trial.trialNumber, mode: trial.mode, modeLabel: trial.modeLabel,
@@ -105,8 +107,8 @@ Page({
     this.trials.push(storedTrial);
     try { storage.saveTrial(storedTrial); } catch (error) { wx.showToast({ title: "本题记录保存失败", icon: "none" }); }
     this.index += 1;
-    this.setData({ status: correct ? "回答正确" : "继续保持", feedback: correct ? "✓" : "×", feedbackClass: correct ? "good" : "bad", prompt: correct ? "很好，难度将逐步提高" : "本题正确答案：" + engine.answerLabel(trial.correctAnswer) }); this.updateMetrics();
-    await wait(engine.TIMING.feedback); if (!this.session || this.session.status !== "in_progress") return;
+    this.setData({ status: showAttentionReminder ? "重新注视中心" : correct ? "回答正确" : "继续保持", feedback: correct ? "✓" : "×", feedbackClass: correct ? "good" : "bad", prompt: showAttentionReminder ? "可以稍作调整，重新注视中心；看不清楚凭感觉猜即可。" : correct ? "很好，难度将逐步提高" : "本题正确答案：" + engine.answerLabel(trial.correctAnswer) }); this.updateMetrics();
+    await wait(showAttentionReminder ? 1400 : engine.TIMING.feedback); if (!this.session || this.session.status !== "in_progress") return;
     this.setData({ feedback: "", feedbackClass: "" }); this.nextTrial();
   },
   updateMetrics() {

@@ -1,6 +1,6 @@
 import * as desktopStorage from "./db.js";
 import { createId } from "./db.js";
-import { drawBlank, drawShifted, drawSingle, drawTriple } from "./gabor.js";
+import { drawBlank, drawFrameBorder, drawShifted, drawSingle, drawTriple } from "./gabor.js";
 
 export const MODE_INFO = {
   mixed: { label: "综合训练", description: "单图、三图、清晰图、移图按固定顺序分段进行，每种分别完成所选训练长度。" },
@@ -11,9 +11,12 @@ export const MODE_INFO = {
 };
 
 const TASK_MODES = ["single", "triple", "darker", "shifted"];
+export const STIMULUS_ORIENTATIONS = [0, 45, 90, 135];
 const BACKGROUND = 158;
 const BASE_STIMULUS = { background: BACKGROUND, sigma: 23, frequency: 0.047 };
 const TIMING = { fixation: 650, interval: 430, gap: 330, shifted: 560, feedback: 520 };
+const ATTENTION_REMINDER_AFTER = 3;
+const ATTENTION_REMINDER_DURATION = 1400;
 
 export const INITIAL_LEVELS = { single: 0.24, triple: 0.19, darker: 0.10, shifted: 19 };
 
@@ -75,6 +78,8 @@ export class TrainingController {
     this.persistedLevels = {};
     this.inheritedModes = [];
     this.correctStreaks = {};
+    this.incorrectStreak = 0;
+    this.frameBorderThickness = 2;
 
     this.elements = elements || {
       modeGrid: document.querySelector("#modeGrid"),
@@ -338,6 +343,7 @@ export class TrainingController {
     this.currentTrialIndex = 0;
     this.correctCount = 0;
     this.trialSequence = this.buildSequence();
+    this.incorrectStreak = 0;
     this.totalTrials = this.trialSequence.length;
     this.lockSetup(true);
     this.elements.startButton.querySelector("span").textContent = this.sessionType === "experience" ? "正在准备体验" : "正在准备";
@@ -492,7 +498,7 @@ export class TrainingController {
 
   createTrial(mode) {
     const layoutAngle = Math.random() < 0.5 ? 0 : 90;
-    const angle = layoutAngle === 90 ? 0 : 90;
+    const angle = STIMULUS_ORIENTATIONS[Math.floor(Math.random() * STIMULUS_ORIENTATIONS.length)];
     const phase = Math.random() * Math.PI * 2;
     const common = {
       id: createId("trial"),
@@ -594,6 +600,7 @@ export class TrainingController {
       this.showFixation(false);
       this.showIntervalLabel(`第 ${interval} 帧`);
       this.drawTemporalInterval(interval);
+      drawFrameBorder(this.elements.canvas, this.frameBorderThickness);
       await sleep(TIMING.interval);
       if (token !== this.runToken) return;
 
@@ -654,6 +661,7 @@ export class TrainingController {
       offsetSigned: trial.offsetSigned,
       contrast: trial.contrast,
     });
+    drawFrameBorder(this.elements.canvas, this.frameBorderThickness);
 
     await sleep(TIMING.shifted);
     if (token !== this.runToken) return;
@@ -713,7 +721,14 @@ export class TrainingController {
     const trial = this.currentTrial;
     const correct = answer === trial.correctAnswer;
     const reactionTimeMs = Math.round(performance.now() - trial.responseStartedAt);
-    if (correct) this.correctCount += 1;
+    if (correct) {
+      this.correctCount += 1;
+      this.incorrectStreak = 0;
+    } else {
+      this.incorrectStreak += 1;
+    }
+    const showAttentionReminder = this.incorrectStreak >= ATTENTION_REMINDER_AFTER;
+    if (showAttentionReminder) this.incorrectStreak = 0;
 
     const levelAfter = this.adaptLevel(trial.mode, correct);
     const storedTrial = {
@@ -736,11 +751,13 @@ export class TrainingController {
     if (token !== this.runToken) return;
 
     this.showFeedback(correct, trial.correctAnswer);
-    this.elements.status.textContent = correct ? "回答正确" : "继续保持";
-    this.elements.responsePrompt.textContent = correct ? "很好，难度将逐步提高" : `本题正确答案：${this.answerLabel(trial.correctAnswer)}`;
+    this.elements.status.textContent = showAttentionReminder ? "重新注视中心" : correct ? "回答正确" : "继续保持";
+    this.elements.responsePrompt.textContent = showAttentionReminder
+      ? "可以稍作调整，重新注视中心；看不清楚凭感觉猜即可。"
+      : correct ? "很好，难度将逐步提高" : `本题正确答案：${this.answerLabel(trial.correctAnswer)}`;
     this.currentTrialIndex += 1;
     this.updateMetrics();
-    await sleep(TIMING.feedback);
+    await sleep(showAttentionReminder ? ATTENTION_REMINDER_DURATION : TIMING.feedback);
     if (token !== this.runToken) return;
     this.hideFeedback();
     await this.presentNextTrial();

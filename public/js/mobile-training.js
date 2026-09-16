@@ -11,6 +11,7 @@ export class MobileTrainingController extends TrainingController {
     elements.modeCards = [...root.querySelectorAll("[data-mobile-mode]")];
     elements.responseButtons = [...elements.temporalButtons.querySelectorAll("button")];
     super({ ...options, storage: mobileStorage, elements });
+    this.frameBorderThickness = 6;
   }
 
   bindEvents() {
@@ -66,6 +67,7 @@ export class MobileTrainingController extends TrainingController {
     this.currentTrialIndex = 0;
     this.correctCount = 0;
     this.trialSequence = this.buildSequence();
+    this.incorrectStreak = 0;
     this.totalTrials = this.trialSequence.length;
     this.lockSetup(true);
     this.enterFocusMode();
