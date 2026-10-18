@@ -43,6 +43,26 @@ test("only explicit, dated acceptance of the current version skips the gate", as
   assert.equal(get("#usageAgreement").open, false);
 });
 
+test("acceptance expires at seven days and confirming renews it", async () => {
+  const originalNow = Date.now;
+  const now = Date.parse("2026-10-14T12:00:00Z");
+  const week = 7 * 24 * 60 * 60 * 1000;
+  Date.now = () => now;
+  try {
+    for (const [age, expected] of [[0,true],[week-1,true],[week,false],[week+1,false],[-1,false]]) {
+      harness({ record: JSON.stringify({ version: AGREEMENT_VERSION, accepted: true, acceptedAt: new Date(now-age).toISOString() }) });
+      assert.equal(hasAcceptedAgreement(), expected, `age ${age}`);
+    }
+  } finally { Date.now = originalNow; }
+  const { get } = harness({ record: JSON.stringify({ version: AGREEMENT_VERSION, accepted: true, acceptedAt: new Date(Date.now()-week).toISOString() }) });
+  const pending = requireAgreement();
+  assert.equal(get("#usageAgreement").open, true);
+  get("#agreementCheckbox").checked = true;
+  get("#acceptAgreement").fire("click");
+  await pending;
+  assert.equal(hasAcceptedAgreement(), true);
+});
+
 test("unchecked acceptance, decline and Escape keep first-time users behind the gate", async () => {
   const { get, values } = harness();
   let entered = false;

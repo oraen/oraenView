@@ -18,6 +18,7 @@ Page({
   },
   onReady() {
     wx.setKeepScreenOn({ keepScreenOn: true });
+    this.initFeedbackSounds();
     this.canvasInitAttempts = 0;
     this.initializeCanvas();
   },
@@ -94,6 +95,7 @@ Page({
   },
   async handleAnswer(answer) {
     this.setData({ canAnswer: false }); const trial = this.trial, correct = answer === trial.correctAnswer;
+    this.playFeedbackSound(correct);
     if (correct) { this.correctCount += 1; this.incorrectStreak = 0; } else this.incorrectStreak += 1;
     const showAttentionReminder = this.incorrectStreak >= 3;
     if (showAttentionReminder) this.incorrectStreak = 0;
@@ -113,6 +115,26 @@ Page({
   },
   updateMetrics() {
     this.setData({ progress: this.index + " / " + this.sequence.length, accuracy: this.index ? Math.round(this.correctCount / this.index * 100) + "%" : "—", threshold: this.trial ? engine.formatLevel(this.trial.mode, this.levels[this.trial.mode]) : "—", progressWidth: this.index / this.sequence.length * 100 });
+  },
+  initFeedbackSounds() {
+    if (this.feedbackSounds || typeof wx.createInnerAudioContext !== "function") return;
+    const createSound = (src) => {
+      const audio = wx.createInnerAudioContext();
+      audio.autoplay = false; audio.loop = false; audio.obeyMuteSwitch = true; audio.volume = 1; audio.src = src;
+      return audio;
+    };
+    this.feedbackSounds = { correct: createSound("/audio/correct.mp3"), incorrect: createSound("/audio/incorrect.mp3") };
+  },
+  playFeedbackSound(correct) {
+    this.initFeedbackSounds();
+    const audio = this.feedbackSounds && this.feedbackSounds[correct ? "correct" : "incorrect"];
+    if (!audio) return;
+    try { audio.stop(); audio.play(); } catch (error) { console.warn("feedback sound unavailable", error); }
+  },
+  destroyFeedbackSounds() {
+    if (!this.feedbackSounds) return;
+    Object.keys(this.feedbackSounds).forEach((key) => this.feedbackSounds[key].destroy());
+    this.feedbackSounds = null;
   },
   complete() {
     const endedAt = new Date().toISOString(), modeStats = {};
@@ -137,6 +159,6 @@ Page({
     if (!this.session || this.session.status !== "in_progress") return;
     this.runToken += 1; const endedAt = new Date().toISOString(); this.session = Object.assign({}, this.session, { status: "incomplete", incompleteReason: reason, completedTrials: this.trials.length, correctCount: this.correctCount, accuracy: this.trials.length ? engine.round(this.correctCount / this.trials.length) : 0, endedAt, durationMs: new Date(endedAt) - new Date(this.session.startedAt), finalLevels: Object.assign({}, this.levels) }); storage.saveSession(this.session);
   },
-  onUnload() { this.clearReturnTimer(); this.abort("navigation"); },
+  onUnload() { this.clearReturnTimer(); this.abort("navigation"); this.destroyFeedbackSounds(); },
   onShareAppMessage() { return { title: "开源视觉 · 掌上视觉训练", path: "/pages/mobile/index" }; },
 });

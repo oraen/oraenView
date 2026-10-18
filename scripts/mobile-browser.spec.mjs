@@ -126,7 +126,7 @@ test("desktop preparation and experience training still use desktop storage", as
   await expect(page.locator("#trainerStatus")).toHaveText("预备模式");
   await page.locator("#stageMessage h3").click();
   await expect(page.locator("#trainerStatus")).toHaveText("等待作答");
-  await page.keyboard.press("1");
+  await page.keyboard.press("ArrowLeft");
   await expect(page.locator("#trainerStatus")).toHaveText("体验完成");
   expect(await page.evaluate(async () => {
     const desktop = await import("/js/db.js");

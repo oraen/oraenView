@@ -7,14 +7,14 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../app/', import.meta.url));
 const accelerated = process.argv.includes('--full');
-const policy = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'";
+const policy = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'";
 const server = http.createServer((req, res) => {
   const relative = decodeURIComponent(new URL(req.url, 'http://localhost').pathname).replace(/^\//, '') || 'index.html';
   const file = path.resolve(root, relative);
   if (!file.startsWith(root) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404); res.end(); return; }
   let body = fs.readFileSync(file);
-  if (accelerated && relative === 'js/training.js') body = Buffer.from(body.toString().replace('setTimeout(resolve, milliseconds)', 'setTimeout(resolve, Math.min(milliseconds, 10))'));
-  res.writeHead(200, { 'Content-Type': ({ '.html':'text/html; charset=utf-8', '.js':'application/javascript', '.css':'text/css', '.jpg':'image/jpeg' })[path.extname(file)], 'Content-Security-Policy': policy });
+  if (accelerated && (relative === 'js/training.js' || relative === 'js/child-training.js')) body = Buffer.from(body.toString().replace('setTimeout(resolve, milliseconds)', 'setTimeout(resolve, Math.min(milliseconds, 10))').replace('const MEMORY_MASK_MS = 220', 'const MEMORY_MASK_MS = 10'));
+  res.writeHead(200, { 'Content-Type': ({ '.html':'text/html; charset=utf-8', '.js':'application/javascript', '.css':'text/css', '.jpg':'image/jpeg', '.mp3':'audio/mpeg' })[path.extname(file)], 'Content-Security-Policy': policy });
   res.end(body);
 });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -41,7 +41,7 @@ try {
   assert.equal(await page.locator('#consentOverlay').count(),0);
   await page.locator('#mobilePage.active').waitFor();
   assert.equal(await page.locator('.page').count(),2);
-  assert.equal(await page.locator('[data-records-platform]').count(),0);
+  assert.equal(await page.locator('[data-records-platform]').count(),2);
   assert.equal(await page.locator('[target="_blank"], [download], script[type="module"]').count(),0);
   await page.screenshot({path:new URL('../menu.png',import.meta.url).pathname.replace(/^\/([A-Z]:)/,'$1'),fullPage:true});
   // Verify adaptation retained staircase behavior and fixed session lengths.
@@ -57,6 +57,31 @@ try {
     });
   });
   assert.ok(invariants.every(Boolean));
+  await page.evaluate(async () => { const levels={}; window.ChildGamesCore.GAME_ORDER.forEach(id=>{levels[id]=window.ChildGamesCore.MAX_LEVEL}); await window.ChildToolStorage.saveSetting(window.ChildToolStorage.LEVELS_KEY,levels); window.ChildGamesCore.adaptLevel=()=>({level:window.ChildGamesCore.MAX_LEVEL,streak:0}); });
+  await page.locator('#childTrainingEntry').tap();
+  assert.equal(await page.locator('[data-child-game]').count(),12);
+  await page.waitForFunction(()=>document.querySelector('[data-child-game="crowding-c"] > b').textContent==='30级');
+  assert.equal(await page.locator('[data-child-game="crowding-c"] > b').innerText(),'30级');
+  assert.equal(await page.locator('.child-parent-note,.child-hub-heading p').count(),0);
+  await page.locator('[data-child-game="crowding-c"]').tap();
+  await page.locator('#childTutorial:not(.hidden)').waitFor();
+  await page.locator('#childTutorialStart').tap();
+  await page.locator('#childGamePanel:not(.hidden)').waitFor();
+  assert.equal(await page.locator('#childGameProgress').innerText(),'0 / 24');
+  await page.locator('#childGamePause').tap();
+  assert.equal(await page.locator('#childGameFeedback').innerText(),'训练已暂停');
+  await page.locator('#childGamePause').tap();
+  for(let i=0;i<24;i++){
+    await page.locator('#childDirectionPad button').first().tap();
+    await page.waitForFunction(expected=>document.querySelector('#childGameProgress').textContent.startsWith(expected+' /'),i+1);
+    if (!accelerated && i < 23) await page.waitForTimeout(1250);
+  }
+  await page.locator('#childGameRestart:not(.hidden)').waitFor();
+  await page.locator('#childGameExit').tap();
+  await page.locator('[data-child-game="crowding-c"]').tap();
+  await page.locator('#childTutorial:not(.hidden)').waitFor();
+  await page.locator('#childTutorialCancel').tap();
+  await page.locator('#childHubBack').tap();
   const modes=accelerated?['mixed','single','triple','darker','shifted']:['single'];
   for(const mode of modes){
     await page.locator(`[data-mobile-mode="${mode}"]`).tap();
@@ -82,6 +107,18 @@ try {
   const expectedCount=accelerated?512:1;
   assert.equal(await page.locator('#totalTrialsKpi').innerText(),String(expectedCount));
   if(accelerated)assert.equal(await page.locator('#difficultyTrendsGrid svg').count(),4);
+  await page.locator('[data-records-platform="child"]').tap();
+  await page.waitForFunction(()=>document.querySelector('#totalTrialsKpi').textContent==='24');
+  assert.equal(await page.locator('#currentDifficultyGrid .current-difficulty-card').count(),12);
+  assert.equal(await page.locator('#difficultyTrendsGrid .difficulty-trend-card').count(),12);
+  await page.locator('[data-session-id]').first().tap();
+  await page.locator('#trialDetailPanel:not(.hidden)').waitFor();
+  await page.locator('#closeTrialDetail').tap();
+  page.once('dialog',dialog=>dialog.accept());
+  await page.locator('#clearDataButton').tap();
+  await page.waitForFunction(()=>document.querySelector('#totalTrialsKpi').textContent==='0');
+  await page.locator('[data-records-platform="mobile"]').tap();
+  await page.waitForFunction(expected=>document.querySelector('#totalTrialsKpi').textContent===String(expected),expectedCount);
   await page.screenshot({path:fileURLToPath(new URL('../records.png',import.meta.url)),fullPage:true});
   await page.reload();
   await page.waitForFunction(expected=>document.querySelector('#totalTrialsKpi').textContent===String(expected),expectedCount);

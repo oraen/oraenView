@@ -61,8 +61,8 @@ async function main() {
         }));
         return;
       }
-      const firstFrame = document.querySelector('#temporalButtons [data-answer="1"]');
-      if (firstFrame && !firstFrame.disabled && firstFrame.offsetParent !== null) {
+      const firstFrame = document.querySelector('#temporalButtons .response-shortcut');
+      if (firstFrame && firstFrame.getAttribute('aria-disabled') !== 'true' && firstFrame.offsetParent !== null) {
         document.querySelector('#trainerPanel').dispatchEvent(new MouseEvent('mousedown', {
           bubbles: true,
           button: 0,

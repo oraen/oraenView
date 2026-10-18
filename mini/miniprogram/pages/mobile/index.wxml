@@ -4,11 +4,11 @@
   <view class="page-copy">每次尽量保持相同的屏幕尺寸、观看距离和光线，距离屏幕最好半米以上。双眼训练，无需遮盖；平时戴眼镜的话，训练时也请戴上。</view>
 
   <view class="mode-list">
+    <button class="mode-card child-entry card" bindtap="startChildTraining"><view><text class="mode-title">弱视小游戏</text><text class="mode-caption">十二个视觉小游戏</text></view><text class="arrow">→</text></button>
     <button class="mode-card card" wx:for="{{modes}}" wx:key="key" data-mode="{{item.key}}" bindtap="startTraining">
       <view><text class="mode-title">{{item.label}}</text><text class="mode-caption">{{item.caption}}</text></view><text class="arrow">→</text>
     </button>
   </view>
-  <view class="pro-site">专业版：view.oraen.com</view>
 
   <view class="last-card card">
     <view class="last-heading">上次训练记录</view>
@@ -25,4 +25,5 @@
     <view><text class="author-label">开发者</text><text class="author-name">小红书：慢手</text><text class="author-id">ID：49624205605</text></view>
   </view>
   <view class="author-tip">可在小红书搜索 ID 找到作者</view>
+  <view class="pro-site">专业版：view.oraen.com</view>
 </view>

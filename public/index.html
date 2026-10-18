@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#111c44">
   <meta name="description" content="Oraen View Gabor 视觉知觉训练研究原型">
   <title>开源视觉 Oraen View</title>
@@ -206,9 +206,15 @@
 
               <div class="response-area" id="responseArea" aria-live="polite">
                 <p id="responsePrompt">训练开始后在这里作答</p>
-                <div class="response-buttons temporal-buttons" id="temporalButtons">
-                  <button type="button" data-answer="1"><kbd>左键</kbd><span>第一帧</span></button>
-                  <button type="button" data-answer="2"><kbd>右键</kbd><span>第二帧</span></button>
+                <div class="response-shortcuts temporal-buttons" id="temporalButtons" aria-label="答题操作说明">
+                  <div class="response-shortcut">
+                    <span class="shortcut-keys"><kbd>左键</kbd><kbd>←</kbd><kbd>A</kbd></span>
+                    <span class="response-label">第一帧</span>
+                  </div>
+                  <div class="response-shortcut">
+                    <span class="shortcut-keys"><kbd>右键</kbd><kbd>→</kbd><kbd>D</kbd></span>
+                    <span class="response-label">第二帧</span>
+                  </div>
                 </div>
               </div>
             </section>
@@ -219,12 +225,33 @@
           <div class="mobile-intro"><h2 id="mobileHeading">掌上训练</h2>
             <p>每次尽量保持相同的屏幕尺寸、观看距离和光线，距离屏幕最好半米以上。双眼训练，无需遮盖；平时戴眼镜的话，训练时也请戴上。</p>
           </div>
-          <div class="mobile-mode-list"><button type="button" data-mobile-mode="mixed"><strong>综合训练</strong><span>四种模式，各 64 次 →</span></button>
+          <div class="mobile-mode-list" id="mobileModeList"><button type="button" id="childTrainingEntry" class="child-training-entry"><strong>弱视小游戏</strong><span>十二个视觉小游戏 →</span></button>
+<button type="button" data-mobile-mode="mixed"><strong>综合训练</strong><span>四种模式，各 64 次 →</span></button>
 <button type="button" data-mobile-mode="single"><strong>单图训练</strong><span>选出有图像的那一帧 →</span></button>
 <button type="button" data-mobile-mode="triple"><strong>三图训练</strong><span>选出有中间图像的那一帧 →</span></button>
 <button type="button" data-mobile-mode="darker"><strong>清晰图训练</strong><span>选出更清晰的那一帧 →</span></button>
 <button type="button" data-mobile-mode="shifted"><strong>移图训练</strong><span>判断中间图像偏向哪边 →</span></button>
 </div>
+          <section class="child-game-hub hidden" id="childGameHub">
+            <div class="child-hub-heading"><button type="button" id="childHubBack">← 返回</button><span>CHILD VISION GAMES</span><h3>弱视小游戏</h3></div>
+            <div class="child-game-cards" id="childGameCards"></div>
+          </section>
+          <div class="child-tutorial hidden" id="childTutorial" role="dialog" aria-modal="true" aria-labelledby="childTutorialTitle"><div class="child-tutorial-card"><span>HOW TO PLAY</span><i id="childTutorialIcon">✦</i><h3 id="childTutorialTitle">游戏教学</h3><p id="childTutorialText"></p><small id="childTutorialSkill"></small><div class="child-setup-actions"><button type="button" id="childTutorialCancel">返回列表</button><button type="button" id="childTutorialStart">我知道了，开始</button></div></div></div>
+          <div class="child-glasses-setup hidden" id="childGlassesSetup" role="dialog" aria-modal="true" aria-labelledby="childSetupTitle">
+            <div class="child-setup-card"><span>RED / CYAN SETUP</span><h3 id="childSetupTitle">先检查红青眼镜</h3><p>请使用红色与青色镜片的眼镜。分别闭上一只眼：红色镜片应让青色图案明显变暗，青色镜片应让红色图案明显变暗。</p>
+              <div class="anaglyph-calibration"><i class="red">红色 RED</i><i class="cyan">青色 CYAN</i></div>
+              <fieldset><legend>红色镜片戴在哪只眼？</legend><label><input type="radio" name="redLensEye" value="left" checked> 左眼</label><label><input type="radio" name="redLensEye" value="right"> 右眼</label></fieldset>
+              <fieldset><legend>弱视眼</legend><label><input type="radio" name="childWeakEye" value="left"> 左眼</label><label><input type="radio" name="childWeakEye" value="right"> 右眼</label><label><input type="radio" name="childWeakEye" value="unknown" checked> 不确定</label></fieldset>
+              <label class="child-calibration-confirm"><input type="checkbox" id="childCalibrationConfirm"> 我已检查镜片，单眼观察时另一颜色会明显变暗</label>
+              <div class="child-setup-actions"><button type="button" id="childSetupCancel">暂不训练</button><button type="button" id="childSetupStart">保存并开始</button></div>
+            </div>
+          </div>
+          <section class="child-game-panel hidden" id="childGamePanel">
+            <header><div class="child-session-actions"><button type="button" id="childGameExit">结束</button><button type="button" id="childGamePause">暂停</button></div><div><strong id="childGameName">弱视小游戏</strong><small id="childGameInstruction">准备开始</small></div><span><b id="childGameProgress">0 / 24</b><small id="childGameAccuracy">—</small><em id="childGameLevel">1 级</em></span></header>
+            <div class="child-progress"><i id="childGameProgressBar"></i></div>
+            <div class="child-canvas-wrap"><canvas id="childGameCanvas" width="480" height="480" aria-label="弱视小游戏区域"></canvas><div class="child-game-feedback" id="childGameFeedback"></div></div>
+            <div class="child-answer-area"><p id="childTapHint">点一下你找到的目标</p><div class="child-direction-pad hidden" id="childDirectionPad"><button data-child-answer="up">↑</button><button data-child-answer="left">←</button><button data-child-answer="right">→</button><button data-child-answer="down">↓</button></div><div class="child-side-pad hidden" id="childSidePad"><button data-child-answer="left">左边</button><button data-child-answer="right">右边</button></div><button type="button" class="hidden" id="childGameRestart">再玩一次</button></div>
+          </section>
             <section class="panel trainer-panel" data-mobile="trainerPanel">
               <div class="trainer-toolbar">
                 <div>
@@ -379,6 +406,7 @@
           <div class="records-platform" aria-label="训练数据来源">
             <button type="button" data-records-platform="desktop" aria-pressed="true">电脑版</button>
             <button type="button" data-records-platform="mobile" aria-pressed="false">掌上训练</button>
+            <button type="button" data-records-platform="child" aria-pressed="false">弱视小游戏</button>
           </div>
           <p id="recordsPlatformHint">当前显示电脑版数据；导出和清空仅针对电脑版。</p>
           <div class="kpi-grid">
@@ -682,9 +710,10 @@
     <header class="agreement-heading">
       <h2 id="agreementTitle" tabindex="-1">软件使用协议</h2>
       <p id="agreementIntro">使用 Oraen View 前，请阅读并同意以下约定。</p>
-      <small>版本 <span id="agreementVersion">2026-09-12.2</span></small>
+      <small>版本 <span id="agreementVersion">2026-10-14.1</span></small>
     </header>
     <div class="agreement-text" id="agreementText" tabindex="0" role="region" aria-label="使用协议全文">
+      <p><strong>本软件不是医疗器械，仅用于学术交流和娱乐，不能用于治疗。弱视、斜视请到正规医院就诊。</strong></p>
       <p><strong>1. 完全免费。</strong>项目不以盈利为目的，源码公开，不会以任何形式向用户收取费用。也无法代替正规医疗流程</p>
       <p><strong>2. 自主使用。</strong>用户自行判断是否需要和使用，作者分享的个人经历不代表其他人的使用结果。作者没有医疗相关资质无法对训练效果作保证。</p>
       <p><strong>3. 禁止商用。</strong>本项目仅供非商业用途，不得用于收费训练、商业转售，或作为付费产品、服务的一部分。</p>
@@ -703,6 +732,7 @@
   </dialog>
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
 
+  <script src="/js/child-games-core.js"></script>
   <script type="module" src="/js/app.js"></script>
 </body>
 </html>

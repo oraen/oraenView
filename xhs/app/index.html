@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 
-<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/><title>开源视觉 Oraen View</title><link href="./images/author-avatar.jpg" rel="icon"/><link href="./style.css" rel="stylesheet"/></head>
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" name="viewport"/><title>开源视觉 Oraen View</title><link href="./images/author-avatar.jpg" rel="icon"/><link href="./style.css" rel="stylesheet"/></head>
 <body><header class="tool-header"><strong>开源视觉</strong><span>ORAEN VIEW</span></header>
 <nav aria-label="功能菜单" class="tool-nav"><button aria-pressed="true" data-route="mobile" type="button">掌上训练</button><button aria-pressed="false" data-route="records" type="button">训练数据</button></nav>
 <p class="hidden" id="startupStatus" role="alert"></p><main class="page-container"><section aria-labelledby="mobileHeading" class="page mobile-page" data-page="mobile" id="mobilePage">
 <div class="mobile-intro"><h2 id="mobileHeading">掌上训练</h2>
 <p>每次尽量保持相同的屏幕尺寸、观看距离和光线，距离屏幕最好半米以上。双眼训练，无需遮盖；平时戴眼镜的话，训练时也请戴上。</p>
 </div>
-<div class="mobile-mode-list"><button data-mobile-mode="mixed" type="button"><strong>综合训练</strong><span>四种模式，各 64 次 →</span></button>
+<div class="mobile-mode-list" id="mobileModeList"><button type="button" id="childTrainingEntry" class="child-training-entry"><strong>弱视小游戏</strong><span>十二个视觉小游戏 →</span></button><button data-mobile-mode="mixed" type="button"><strong>综合训练</strong><span>四种模式，各 64 次 →</span></button>
 <button data-mobile-mode="single" type="button"><strong>单图训练</strong><span>选出有图像的那一帧 →</span></button>
 <button data-mobile-mode="triple" type="button"><strong>三图训练</strong><span>选出有中间图像的那一帧 →</span></button>
 <button data-mobile-mode="darker" type="button"><strong>清晰图训练</strong><span>选出更清晰的那一帧 →</span></button>
 <button data-mobile-mode="shifted" type="button"><strong>移图训练</strong><span>判断中间图像偏向哪边 →</span></button>
-</div><p class="tool-site-caption">专业版：view.oraen.com</p>
+</div>
+<section class="child-game-hub hidden" id="childGameHub"><div class="child-hub-heading"><button type="button" id="childHubBack">← 返回</button><span>CHILD VISION GAMES</span><h3>弱视小游戏</h3></div><div class="child-game-cards" id="childGameCards"></div></section><p class="tool-site-caption">专业版：view.oraen.com</p>
+<div class="child-tutorial hidden" id="childTutorial" role="dialog" aria-modal="true" aria-labelledby="childTutorialTitle"><div class="child-tutorial-card"><span>HOW TO PLAY</span><i id="childTutorialIcon">&#10022;</i><h3 id="childTutorialTitle">&#28216;&#25103;&#25945;&#23398;</h3><p id="childTutorialText"></p><small id="childTutorialSkill"></small><div class="child-setup-actions"><button type="button" id="childTutorialCancel">&#36820;&#22238;&#21015;&#34920;</button><button type="button" id="childTutorialStart">&#25105;&#30693;&#36947;&#20102;&#65292;&#24320;&#22987;</button></div></div></div>
+<div class="child-glasses-setup hidden" id="childGlassesSetup" role="dialog" aria-modal="true" aria-labelledby="childSetupTitle"><div class="child-setup-card"><span>RED / CYAN SETUP</span><h3 id="childSetupTitle">先检查红青眼镜</h3><p>分别闭上一只眼：红色镜片应让青色图案明显变暗，青色镜片应让红色图案明显变暗。</p><div class="anaglyph-calibration"><i class="red">红色 RED</i><i class="cyan">青色 CYAN</i></div><fieldset><legend>红色镜片戴在哪只眼</legend><label><input type="radio" name="redLensEye" value="left" checked> 左眼</label><label><input type="radio" name="redLensEye" value="right"> 右眼</label></fieldset><fieldset><legend>弱视眼</legend><label><input type="radio" name="childWeakEye" value="left"> 左眼</label><label><input type="radio" name="childWeakEye" value="right"> 右眼</label><label><input type="radio" name="childWeakEye" value="unknown" checked> 不确定</label></fieldset><label class="child-calibration-confirm"><input type="checkbox" id="childCalibrationConfirm"> 我已检查镜片，单眼观察时另一颜色会明显变暗</label><div class="child-setup-actions"><button type="button" id="childSetupCancel">暂不训练</button><button type="button" id="childSetupStart">保存并开始</button></div></div></div>
+<section class="child-game-panel hidden" id="childGamePanel"><header><div class="child-session-actions"><button type="button" id="childGameExit">结束</button><button type="button" id="childGamePause">&#26242;&#20572;</button></div><div><strong id="childGameName">弱视小游戏</strong><small id="childGameInstruction">准备开始</small></div><span><b id="childGameProgress">0 / 24</b><small id="childGameAccuracy">—</small><em id="childGameLevel">1 级</em></span></header><div class="child-progress"><i id="childGameProgressBar"></i></div><div class="child-canvas-wrap"><canvas id="childGameCanvas" width="480" height="480" aria-label="弱视小游戏区域"></canvas><div class="child-game-feedback" id="childGameFeedback"></div></div><div class="child-answer-area"><p id="childTapHint">点一下你找到的目标</p><div class="child-direction-pad hidden" id="childDirectionPad"><button data-child-answer="up">↑</button><button data-child-answer="left">←</button><button data-child-answer="right">→</button><button data-child-answer="down">↓</button></div><div class="child-side-pad hidden" id="childSidePad"><button data-child-answer="left">左边</button><button data-child-answer="right">右边</button></div><button type="button" class="hidden" id="childGameRestart">再玩一次</button></div></section>
 <section class="panel trainer-panel" data-mobile="trainerPanel">
 <div class="trainer-toolbar">
 <div>
@@ -59,6 +63,7 @@
 <button class="danger-button" id="clearDataButton" type="button">清空数据</button>
 </div>
 </div>
+<div class="records-platform"><button type="button" data-records-platform="mobile" aria-pressed="true">掌上训练</button><button type="button" data-records-platform="child" aria-pressed="false">弱视小游戏</button></div><p id="recordsPlatformHint">当前显示掌上训练数据，两类数据互不影响。</p>
 <div class="kpi-grid">
 <article class="kpi-card accent-blue">
 <span>完成训练</span><strong id="totalSessionsKpi">0</strong><small>次会话</small>
@@ -140,4 +145,4 @@
 </section>
 </section></main>
 <div aria-live="polite" class="toast-region" id="toastRegion"></div>
-<script src="./js/compat.js"></script><script src="./js/gabor.js"></script><script src="./js/storage.js"></script><script src="./js/training.js"></script><script src="./js/records.js"></script><script src="./js/app.js"></script></body></html>
+<script src="./js/compat.js"></script><script src="./js/gabor.js"></script><script src="./js/storage.js"></script><script src="./js/child-games-core.js"></script><script src="./js/child-storage.js"></script><script src="./js/feedback-sound.js"></script><script src="./js/training.js"></script><script src="./js/child-training.js"></script><script src="./js/records.js"></script><script src="./js/app.js"></script></body></html>

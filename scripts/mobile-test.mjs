@@ -69,6 +69,29 @@ test("web stimulus frame draws all four red edges inside the stimulus canvas", (
   ]);
 });
 
+test("web training plays distinct correct and incorrect sounds at full volume", () => {
+  const previousAudio = globalThis.Audio;
+  const sounds = [];
+  class FakeAudio {
+    constructor(src) { this.src = src; this.currentTime = -1; sounds.push(this); }
+    play() { this.played = true; return Promise.resolve(); }
+  }
+  globalThis.Audio = FakeAudio;
+  try {
+    const controller = Object.create(TrainingController.prototype);
+    controller.feedbackSounds = null;
+    controller.playFeedbackSound(true);
+    controller.playFeedbackSound(false);
+    assert.deepEqual(sounds.map(({ src, volume, currentTime, played }) => ({ src, volume, currentTime, played })), [
+      { src: "/audio/correct.mp3", volume: 1, currentTime: 0, played: true },
+      { src: "/audio/incorrect.mp3", volume: 1, currentTime: 0, played: true },
+    ]);
+  } finally {
+    if (previousAudio === undefined) delete globalThis.Audio;
+    else globalThis.Audio = previousAudio;
+  }
+});
+
 test("mobile records, settings, export, retention and clearing cannot touch desktop data", async () => {
   await desktop.saveSession({ id: "same-id", startedAt: "2026-01-01", status: "completed" });
   await desktop.saveTrial({ id: "same-trial", sessionId: "same-id", trialNumber: 1 });

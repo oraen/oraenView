@@ -1,6 +1,7 @@
 (function () {
   "use strict";
   let training;
+  let childTraining;
   let records;
   let routeToken = 0;
   function toast(message, type) {
@@ -14,6 +15,7 @@
     const token = ++routeToken;
     const name = location.hash === "#/records" ? "records" : "mobile";
     if (name === "records" && training.isRunning()) await training.abortSession("route_change");
+    if (name === "records" && childTraining.isRunning()) await childTraining.abort("route_change", true);
     if (token !== routeToken) return;
     document.querySelectorAll(".page").forEach(page => page.classList.toggle("active", page.getAttribute("data-page") === name));
     document.querySelectorAll("[data-route]").forEach(button => button.setAttribute("aria-pressed", String(button.getAttribute("data-route") === name)));
@@ -24,10 +26,12 @@
     try {
       if (!window.indexedDB) throw new Error("当前容器不支持本地记录存储，请更新小红书后重试");
       await window.ToolStorage.openDatabase();
+      await window.ChildToolStorage.openDatabase();
       const canvas = document.createElement("canvas");
       if (!canvas.getContext("2d")) throw new Error("当前容器不支持训练画面，请更新小红书后重试");
       records = new window.ToolRecords({ onToast: toast });
       training = new window.ToolTraining.MobileTrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
+      childTraining = new window.ChildToolTraining.ChildTrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
       document.querySelectorAll("[data-route]").forEach(button => button.addEventListener("click", () => {
         location.hash = "#/" + button.getAttribute("data-route");
       }));

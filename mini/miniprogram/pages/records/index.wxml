@@ -1,6 +1,7 @@
 <view class="page-shell">
   <view class="records-head"><view><view class="eyebrow">LOCAL TRAINING DATA</view><view class="page-title">训练数据</view></view><button class="clear" bindtap="clearData">清空数据</button></view>
   <view class="page-copy">记录只保存在当前微信小程序中，不会上传。清理微信数据后记录可能丢失。</view>
+  <view class="platform-tabs"><button data-platform="mobile" class="{{platform === 'mobile' ? 'active' : ''}}" bindtap="switchPlatform">掌上训练</button><button data-platform="child" class="{{platform === 'child' ? 'active' : ''}}" bindtap="switchPlatform">弱视小游戏</button></view>
   <view class="kpis">
     <view class="card"><text>完成训练</text><text class="kpi-value">{{totalSessions}}</text><text class="kpi-unit">次会话</text></view>
     <view class="card"><text>累计试次</text><text class="kpi-value">{{totalTrials}}</text><text class="kpi-unit">次判断</text></view>
@@ -8,12 +9,12 @@
     <view class="card"><text>累计时长</text><text class="kpi-value">{{duration}}</text><text class="kpi-unit">分钟</text></view>
   </view>
   <view class="panel card">
-    <view class="section-title">当前累计难度</view><view class="subtle">数值越低越难，阶数越高越难</view>
+    <view class="section-title">当前累计难度</view><view class="subtle">{{difficultyHint}}</view>
     <view class="levels"><view class="level" wx:for="{{levelCards}}" wx:key="mode"><view><text class="level-name">{{item.label}}</text><text>{{item.stage}}</text></view><text class="level-value">{{item.value}}</text><text class="level-description">{{item.description}}</text></view></view>
   </view>
   <view class="panel card"><view class="section-title">正确率趋势</view><canvas id="accuracyChart" type="2d" class="chart"></canvas></view>
   <view class="panel card">
-    <view class="section-title">各模式表现</view>
+    <view class="section-title">{{summaryTitle}}</view>
     <view class="mode-row" wx:for="{{modeSummary}}" wx:key="mode"><view><text class="mode-name">{{item.label}}</text><text>{{item.text}}</text></view><view class="bar"><view style="width:{{item.rate}}%"></view></view></view>
   </view>
   <view class="panel card">

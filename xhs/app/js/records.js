@@ -122,17 +122,27 @@ class RecordsController {
     this.bindEvents();
   }
   bindEvents() {
+    document.querySelectorAll("[data-records-platform]").forEach((button) => button.addEventListener("click", () => {
+      const platform = button.getAttribute("data-records-platform");
+      if (platform === this.platform) return;
+      this.platform = platform;
+      this.storage = platform === "child" ? window.ChildToolStorage : window.ToolStorage;
+      this.currentPage = 1;
+      this.elements.search.value = "";
+      this.elements.detailPanel.classList.add("hidden");
+      this.load();
+    }));
     this.elements.refresh.addEventListener("click", () => this.load(true));
     this.elements.clear.addEventListener("click", () => this.clearData());
     this.elements.search.addEventListener("input", () => {
       this.currentPage = 1;
-      this.renderSessions();
+      this.renderVisibleSessions();
     });
     this.elements.pagination.addEventListener("click", (event) => {
       const button = event.target.closest("[data-page]");
       if (!button || button.disabled) return;
       this.currentPage = Number(button.dataset.page);
-      this.renderSessions();
+      this.renderVisibleSessions();
       this.elements.sessionsBody.closest(".sessions-panel").scrollIntoView({ behavior: "smooth", block: "start" });
     });
     this.elements.closeDetail.addEventListener("click", () => this.elements.detailPanel.classList.add("hidden"));
@@ -144,13 +154,17 @@ class RecordsController {
   invalidate() {
     this.loaded = false;
   }
+  renderVisibleSessions() { if (this.platform === "child") this.renderChildSessions(); else this.renderSessions(); }
   async load(showToast = false) {
     const token = ++this.loadToken;
     try {
       await this.storage.pruneTrainingData(MAX_VISIBLE_SESSIONS);
-      const data = await Promise.all([this.storage.getSessions(), this.storage.getAllTrials(), this.storage.getSetting(this.storage.ADAPTIVE_LEVELS_KEY)]);
+      const levelsKey = this.platform === "child" ? this.storage.LEVELS_KEY : this.storage.ADAPTIVE_LEVELS_KEY;
+      const data = await Promise.all([this.storage.getSessions(), this.storage.getAllTrials(), this.storage.getSetting(levelsKey)]);
       if (token !== this.loadToken) return;
       this.sessions = data[0]; this.trials = data[1]; this.currentLevels = data[2] || {};
+      document.querySelectorAll("[data-records-platform]").forEach((button) => button.setAttribute("aria-pressed", String(button.getAttribute("data-records-platform") === this.platform)));
+      document.querySelector("#recordsPlatformHint").textContent = this.platform === "child" ? "当前显示弱视小游戏数据；记录、等级和清空均与掌上训练隔离。" : "当前显示掌上训练数据；记录、难度和清空均与弱视小游戏隔离。";
       this.loaded = true;
       this.render();
       if (showToast) this.onToast("训练数据已刷新", "success");
@@ -158,6 +172,7 @@ class RecordsController {
   }
 
   render() {
+    if (this.platform === "child") { this.renderChild(); return; }
     this.renderKpis();
     this.renderCurrentDifficulty();
     this.renderDifficultyTrends();
@@ -165,6 +180,45 @@ class RecordsController {
     this.renderModeSummary();
 
     this.renderSessions();
+  }
+  renderChild() {
+    const core = window.ChildGamesCore;
+    const completed = this.sessions.filter((item) => item.status === "completed");
+    const completedIds = new Set(completed.map((item) => item.id));
+    const trials = this.trials.filter((item) => completedIds.has(item.sessionId));
+    const correct = trials.filter((item) => item.correct).length;
+    this.elements.totalSessions.textContent = String(completed.length);
+    this.elements.totalTrials.textContent = String(trials.length);
+    this.elements.accuracy.textContent = trials.length ? Math.round(correct / trials.length * 100) + "%" : "—";
+    this.elements.duration.textContent = String(Math.round(completed.reduce((sum, item) => sum + (item.durationMs || 0), 0) / 60000));
+    this.elements.currentDifficulty.innerHTML = core.GAME_ORDER.map((id) => {
+      const value = this.currentLevels[id], trained = Number.isFinite(Number(value)), score = trained ? core.difficultyScore(value) : 0, game = core.GAMES[id];
+      return '<article class="current-difficulty-card '+(trained?'':'untrained')+'"><div class="difficulty-card-heading"><strong>'+escapeHtml(game.name)+'</strong><span>'+(trained?score+'/100':'尚未训练')+'</span></div><div class="difficulty-value">'+(trained?value+' 级':'—')+'</div><small>'+escapeHtml(game.skill+(game.glasses?' · 红青分视':''))+'</small><div class="difficulty-track"><i style="width:'+score+'%"></i></div></article>';
+    }).join("");
+    this.renderChart();
+    this.elements.modeSummary.innerHTML = core.GAME_ORDER.map((id) => {
+      const items = trials.filter((trial) => trial.gameId === id), rate = items.length ? Math.round(items.filter((trial) => trial.correct).length / items.length * 100) : 0;
+      return '<div class="mode-bar"><div class="mode-bar-header"><strong>'+escapeHtml(core.GAMES[id].name)+'</strong><span>'+(items.length?rate+'% · '+items.length+' 题':'暂无数据')+'</span></div><div class="bar-track"><i style="width:'+rate+'%"></i></div></div>';
+    }).join("");
+    this.renderChildTrends(); this.renderChildSessions();
+  }
+  renderChildTrends() {
+    const core = window.ChildGamesCore;
+    this.elements.difficultyTrends.innerHTML = core.GAME_ORDER.map((id) => {
+      const items = this.sessions.filter((item) => item.status === "completed" && item.selectedGame === id).slice(0, 20).reverse();
+      if (!items.length) return '<article class="difficulty-trend-card"><div class="trend-card-heading"><strong>'+escapeHtml(core.GAMES[id].name)+'</strong><span>尚未训练</span></div><div class="difficulty-chart-empty">完成游戏后生成等级曲线</div></article>';
+      const points = items.map((item, index) => ({ x: items.length === 1 ? 190 : 24 + index / (items.length - 1) * 332, y: 14 + (core.MAX_LEVEL - Number(item.finalLevel)) / (core.MAX_LEVEL - 1) * 88, level: item.finalLevel }));
+      return '<article class="difficulty-trend-card"><div class="trend-card-heading"><strong>'+escapeHtml(core.GAMES[id].name)+'</strong><span>当前 '+points[points.length-1].level+' 级</span></div><svg viewBox="0 0 380 120"><polyline class="difficulty-chart-line" points="'+points.map((point) => point.x+','+point.y).join(' ')+'"/>'+points.map((point) => '<circle class="difficulty-chart-dot" cx="'+point.x+'" cy="'+point.y+'" r="3"/>').join('')+'</svg></article>';
+    }).join("");
+  }
+  renderChildSessions() {
+    const query = this.elements.search.value.trim().toLowerCase(), core = window.ChildGamesCore;
+    const filtered = this.sessions.filter((item) => !query || ((item.gameName || "") + " " + formatDate(item.startedAt)).toLowerCase().includes(query));
+    const pages = Math.max(1, Math.ceil(filtered.length / SESSION_PAGE_SIZE)); this.currentPage = Math.min(this.currentPage, pages);
+    const visible = filtered.slice((this.currentPage - 1) * SESSION_PAGE_SIZE, this.currentPage * SESSION_PAGE_SIZE);
+    this.elements.sessionsBody.innerHTML = visible.map((item) => '<tr><td><strong>'+escapeHtml(formatDate(item.startedAt,true))+'</strong></td><td>'+escapeHtml(item.gameName||((core.GAMES[item.selectedGame]||{}).name)||'弱视小游戏')+'</td><td><span class="result-chip '+(item.status==='completed'?'success':'incomplete')+'">'+(item.status==='completed'?'已完成':'未完成')+' · '+(item.completedTrials||0)+'/'+(item.plannedTrials||24)+'</span></td><td><strong>'+(item.completedTrials?Math.round((item.accuracy||0)*100)+'%':'—')+'</strong></td><td>'+escapeHtml(formatDuration(item.durationMs))+'</td><td>'+Number(item.finalLevel||item.initialLevel||1)+' 级</td><td><button class="detail-button" data-session-id="'+escapeHtml(item.id)+'">查看明细 →</button></td></tr>').join('');
+    this.elements.empty.classList.toggle('show', !filtered.length); this.elements.pagination.classList.toggle('hidden', pages <= 1);
+    this.elements.pagination.innerHTML = Array.from({ length: pages }, (_, index) => '<button data-page="'+(index+1)+'" '+(index+1===this.currentPage?'disabled':'')+'>'+(index+1)+'</button>').join('');
   }
   renderKpis() {
     const formalSessions = this.sessions.filter((session) => !isExperienceSession(session));
@@ -409,6 +463,16 @@ class RecordsController {
       const token = this.loadToken;
       const trials = await this.storage.getTrialsBySession(sessionId);
       if (token !== this.loadToken) return;
+      if (this.platform === "child") {
+        const game = window.ChildGamesCore.GAMES[session.selectedGame];
+        this.elements.detailPanel.classList.remove("experience-session-detail");
+        this.elements.detailTitle.textContent = formatDate(session.startedAt, true) + " · " + (session.gameName || (game && game.name) || "弱视小游戏") + " · " + trials.length + " 个试次";
+        this.elements.trialsBody.innerHTML = trials.map((trial) => '<tr><td>'+trial.trialNumber+'</td><td><strong>'+escapeHtml(session.gameName||(game&&game.name)||'弱视小游戏')+'</strong></td><td>'+escapeHtml(trial.userAnswer)+' / '+escapeHtml(window.ChildGamesCore.expectedAnswer(trial))+'</td><td class="'+(trial.correct?'answer-good':'answer-bad')+'">'+(trial.correct?'正确':'错误')+'</td><td>'+coalesce(trial.reactionTimeMs,'—')+' ms</td><td>'+trial.levelBefore+' 级 → '+trial.levelAfter+' 级</td></tr>').join('');
+        if (!trials.length) this.elements.trialsBody.innerHTML = '<tr><td colspan="6">该会话没有已完成的试次记录。</td></tr>';
+        this.elements.detailPanel.classList.remove("hidden");
+        this.elements.detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
       const experience = isExperienceSession(session);
       this.elements.detailPanel.classList.toggle("experience-session-detail", experience);
       this.elements.detailTitle.textContent = `${formatDate(session.startedAt, true)} · ${session.modeLabel}${experience ? " · 体验模式" : ""} · ${trials.length} 个试次`;
@@ -440,7 +504,7 @@ class RecordsController {
       this.onToast("当前没有可清理的数据");
       return;
     }
-    if (!window.confirm("确定清空小工具中的训练记录与难度吗？此操作不可恢复。")) return;
+    if (!window.confirm("确定清空" + (this.platform === "child" ? "弱视小游戏" : "掌上训练") + "的记录与难度吗？另一类数据不受影响。此操作不可恢复。")) return;
     try {
       await this.storage.clearTrainingData();
       this.elements.detailPanel.classList.add("hidden");

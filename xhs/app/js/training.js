@@ -68,6 +68,7 @@ class TrainingController {
     this.inheritedModes = [];
     this.correctStreaks = {};
     this.incorrectStreak = 0;
+    this.feedbackSounds = null;
     const root = document.querySelector("#mobilePage");
     const elements = {};
     for (const name of ["startButton", "trainerPanel", "canvas", "stageMessage", "fixation", "intervalLabel", "feedbackFlash", "responsePrompt", "temporalButtons", "status", "liveIndicator", "activeModeLabel", "progressText", "correctText", "thresholdText", "progressBar"]) elements[name] = root.querySelector('[data-mobile="' + name + '"]');
@@ -392,6 +393,7 @@ class TrainingController {
     this.setResponseEnabled(false);
     const trial = this.currentTrial;
     const correct = answer === trial.correctAnswer;
+    this.playFeedbackSound(correct);
     const reactionTimeMs = Math.round(performance.now() - trial.responseStartedAt);
     if (correct) {
       this.correctCount += 1;
@@ -450,6 +452,7 @@ class TrainingController {
     this.levels[mode] = clamp(current, minimum, maximum);
     return this.levels[mode];
   }
+  playFeedbackSound(correct) { window.ToolFeedbackSound.play(correct); }
   async completeSession() {
     this.state = "finishing";
     this.runToken += 1;

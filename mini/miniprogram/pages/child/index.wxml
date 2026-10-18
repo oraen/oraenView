@@ -1,0 +1,11 @@
+<view class="page-shell">
+  <view class="eyebrow">CHILD VISION GAMES</view><view class="page-title">弱视小游戏</view>
+  <view class="game-list"><button class="game-card card" wx:for="{{games}}" wx:key="id" data-game="{{item.id}}" bindtap="chooseGame"><text class="game-icon" style="background: {{item.color}}; color: #fff;">{{item.icon}}</text><view><text class="game-name">{{item.name}}</text><text class="game-caption">{{item.tagline}}</text><text class="game-skill">{{item.skill}}{{item.glasses ? ' · 需红青眼镜' : ''}}</text></view><text class="level-badge">{{item.levelLabel}}</text></button></view>
+</view>
+<view wx:if="{{showTutorial}}" class="setup-mask"><view class="tutorial card"><view class="eyebrow">HOW TO PLAY</view><view class="tutorial-icon" style="background: {{selectedGameInfo.color}};">{{selectedGameInfo.icon}}</view><view class="setup-title">{{selectedGameInfo.name}}</view><view class="setup-copy">{{selectedGameInfo.instruction}}</view><view class="tutorial-skill">每局 24 题 · {{selectedGameInfo.skill}}{{selectedGameInfo.glasses ? ' · 请准备红青眼镜' : ' · 双眼自然观看'}}</view><view class="setup-actions"><button bindtap="cancelTutorial">返回列表</button><button class="primary" bindtap="confirmTutorial">我知道了，开始</button></view></view></view>
+<view wx:if="{{showSetup}}" class="setup-mask"><view class="setup card"><view class="eyebrow">RED / CYAN SETUP</view><view class="setup-title">先检查红青眼镜</view><view class="setup-copy">分别闭上一只眼：红色镜片应让青色图案明显变暗，青色镜片应让红色图案明显变暗。</view>
+  <view class="field"><text>红色镜片戴在哪只眼</text><radio-group bindchange="setRedLens"><label><radio value="left" checked="{{redLensEye === 'left'}}"/>左眼</label><label><radio value="right" checked="{{redLensEye === 'right'}}"/>右眼</label></radio-group></view>
+  <view class="field"><text>弱视眼</text><radio-group bindchange="setWeakEye"><label><radio value="left"/>左眼</label><label><radio value="right"/>右眼</label><label><radio value="unknown" checked/>不确定</label></radio-group></view>
+  <checkbox-group bindchange="setConfirmed"><label class="confirm"><checkbox value="yes"/>我已检查镜片，单眼观察时另一颜色会明显变暗</label></checkbox-group>
+  <view class="setup-actions"><button bindtap="cancelSetup">暂不训练</button><button class="primary" bindtap="saveSetup">保存并开始</button></view>
+</view></view>

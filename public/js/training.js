@@ -80,6 +80,7 @@ export class TrainingController {
     this.correctStreaks = {};
     this.incorrectStreak = 0;
     this.frameBorderThickness = 2;
+    this.feedbackSounds = null;
 
     this.elements = elements || {
       modeGrid: document.querySelector("#modeGrid"),
@@ -104,7 +105,7 @@ export class TrainingController {
       feedbackFlash: document.querySelector("#feedbackFlash"),
       responsePrompt: document.querySelector("#responsePrompt"),
       temporalButtons: document.querySelector("#temporalButtons"),
-      responseButtons: [...document.querySelectorAll("#trainerPanel .response-buttons button")],
+      responseButtons: [...document.querySelectorAll("#trainerPanel .response-shortcut")],
       status: document.querySelector("#trainerStatus"),
       liveIndicator: document.querySelector("#trainerPanel .live-indicator"),
       activeModeLabel: document.querySelector("#activeModeLabel"),
@@ -149,6 +150,7 @@ export class TrainingController {
     this.elements.startButton.addEventListener("click", () => this.prepareSession());
 
     this.elements.trainerPanel.addEventListener("mousedown", (event) => {
+      if (event.target.closest?.("#temporalButtons")) return;
       if (this.state === "ready" && event.button === 0) {
         event.preventDefault();
         this.beginPreparedSession();
@@ -183,10 +185,20 @@ export class TrainingController {
         this.abortSession("escape");
         return;
       }
+      const leftInput = event.key === "ArrowLeft" || event.code === "KeyA";
+      const rightInput = event.key === "ArrowRight" || event.code === "KeyD";
+      if (this.state === "ready" && leftInput) {
+        event.preventDefault();
+        this.beginPreparedSession();
+        return;
+      }
       if (this.state !== "awaiting-response") return;
-      const answerMap = { "1": "1", "2": "2", ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" };
-      const answer = answerMap[event.key];
-      if (!answer || !this.currentTrial.validAnswers.includes(answer)) return;
+      const answer = leftInput
+        ? this.mouseAnswerForTrial(0)
+        : rightInput
+          ? this.mouseAnswerForTrial(2)
+          : null;
+      if (!answer) return;
       event.preventDefault();
       this.handleAnswer(answer);
     });
@@ -349,9 +361,9 @@ export class TrainingController {
     this.elements.startButton.querySelector("span").textContent = this.sessionType === "experience" ? "正在准备体验" : "正在准备";
     this.elements.stageMessage.classList.remove("hidden");
     this.elements.stageMessage.querySelector("h3").textContent = "正在进入预备模式";
-    this.elements.stageMessage.querySelector("p").textContent = "请保持约 1.5 米观看距离，准备好后按鼠标左键开始。";
+    this.elements.stageMessage.querySelector("p").textContent = "请保持约 1.5 米观看距离，准备好后按鼠标左键、← 或 A 开始。";
     this.elements.status.textContent = "正在准备";
-    this.elements.responsePrompt.textContent = "进入预备模式后，按鼠标左键正式开始";
+    this.elements.responsePrompt.textContent = "进入预备模式后，按鼠标左键、← 或 A 正式开始";
     this.elements.liveIndicator.classList.remove("running");
     this.setResponseEnabled(false);
     this.showFixation(false);
@@ -365,11 +377,11 @@ export class TrainingController {
     this.correctStreaks = { single: 0, triple: 0, darker: 0, shifted: 0 };
 
     this.state = "ready";
-    this.elements.startButton.querySelector("span").textContent = "等待左键开始";
+    this.elements.startButton.querySelector("span").textContent = "等待开始";
     this.elements.stageMessage.querySelector("h3").textContent = "训练准备就绪";
-    this.elements.stageMessage.querySelector("p").textContent = "保持注视灰色区域中央，按鼠标左键开始第一题。";
+    this.elements.stageMessage.querySelector("p").textContent = "保持注视灰色区域中央，按鼠标左键、← 或 A 开始第一题。";
     this.elements.status.textContent = "预备模式";
-    this.elements.responsePrompt.textContent = "按鼠标左键正式开始训练；按 Esc 退出";
+    this.elements.responsePrompt.textContent = "按鼠标左键、← 或 A 正式开始训练；按 Esc 退出";
   }
 
   async beginPreparedSession() {
@@ -691,7 +703,7 @@ export class TrainingController {
   showResponseControls(mode) {
     const shifted = mode === "shifted";
     this.elements.temporalButtons.classList.remove("hidden");
-    const labels = [...this.elements.temporalButtons.querySelectorAll("button span")];
+    const labels = [...this.elements.temporalButtons.querySelectorAll(".response-label, button span")];
     if (!shifted) {
       labels[0].textContent = "第一帧";
       labels[1].textContent = "第二帧";
@@ -710,7 +722,11 @@ export class TrainingController {
   }
 
   setResponseEnabled(enabled) {
-    this.elements.responseButtons.forEach((button) => { button.disabled = !enabled; });
+    this.elements.responseButtons.forEach((control) => {
+      if ("disabled" in control) control.disabled = !enabled;
+      control.classList.toggle("disabled", !enabled);
+      control.setAttribute("aria-disabled", String(!enabled));
+    });
   }
 
   async handleAnswer(answer) {
@@ -720,6 +736,7 @@ export class TrainingController {
     this.setResponseEnabled(false);
     const trial = this.currentTrial;
     const correct = answer === trial.correctAnswer;
+    this.playFeedbackSound(correct);
     const reactionTimeMs = Math.round(performance.now() - trial.responseStartedAt);
     if (correct) {
       this.correctCount += 1;
@@ -779,6 +796,30 @@ export class TrainingController {
     const [minimum, maximum] = LEVEL_BOUNDS[mode];
     this.levels[mode] = clamp(current, minimum, maximum);
     return this.levels[mode];
+  }
+
+  playFeedbackSound(correct) {
+    if (typeof Audio !== "function") return;
+    try {
+      if (!this.feedbackSounds) {
+        const createSound = (src) => {
+          const audio = new Audio(src);
+          audio.preload = "auto";
+          audio.volume = 1;
+          return audio;
+        };
+        this.feedbackSounds = {
+          correct: createSound("/audio/correct.mp3"),
+          incorrect: createSound("/audio/incorrect.mp3"),
+        };
+      }
+      const audio = this.feedbackSounds[correct ? "correct" : "incorrect"];
+      audio.currentTime = 0;
+      const playback = audio.play();
+      if (playback?.catch) playback.catch(() => {});
+    } catch (error) {
+      // Audio feedback is optional; unsupported devices continue training silently.
+    }
   }
 
   async completeSession() {

@@ -1,11 +1,14 @@
-export const AGREEMENT_VERSION = "2026-09-12.2";
+export const AGREEMENT_VERSION = "2026-10-14.1";
 export const AGREEMENT_STORAGE_KEY = "oraenView:agreement";
+const AGREEMENT_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function hasAcceptedAgreement() {
   try {
     const record = JSON.parse(localStorage.getItem(AGREEMENT_STORAGE_KEY));
+    const age = Date.now() - Date.parse(record?.acceptedAt);
     return record?.version === AGREEMENT_VERSION && record.accepted === true
-      && typeof record.acceptedAt === "string" && Number.isFinite(Date.parse(record.acceptedAt));
+      && typeof record.acceptedAt === "string" && Number.isFinite(age)
+      && age >= 0 && age < AGREEMENT_VALIDITY_MS;
   } catch {
     return false;
   }

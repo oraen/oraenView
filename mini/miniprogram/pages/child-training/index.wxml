@@ -1,0 +1,6 @@
+<view class="training-shell">
+  <view class="training-head"><view class="session-actions"><button bindtap="finish">结束</button><button bindtap="togglePause">{{paused ? '继续' : '暂停'}}</button></view><view><text class="game-name">{{gameName}}</text><text class="instruction">{{instruction}}</text></view><view class="metrics"><text>{{progress}}</text><text>{{accuracy}} · {{level}}</text></view></view>
+  <view class="progress"><view style="width:{{progressWidth}}%"></view></view>
+  <view class="canvas-wrap"><canvas id="childCanvas" type="2d" class="child-canvas" bindtouchend="tapCanvas"></canvas><view wx:if="{{feedback}}" class="feedback {{feedbackClass}}">{{feedback}}</view></view>
+  <view class="answer-area"><text wx:if="{{responseType === 'target'}}" class="{{trackingHint === '现在点中它' ? 'ready-to-tap' : ''}}">{{trackingHint || "点一下你找到的目标"}}</text><view wx:if="{{responseType === 'direction'}}" class="direction-pad"><button data-answer="up" bindtap="answer">↑</button><button data-answer="left" bindtap="answer">←</button><button data-answer="right" bindtap="answer">→</button><button data-answer="down" bindtap="answer">↓</button></view><view wx:if="{{responseType === 'side'}}" class="side-pad"><button data-answer="left" bindtap="answer">左边</button><button data-answer="right" bindtap="answer">右边</button></view></view>
+</view>

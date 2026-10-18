@@ -6,6 +6,7 @@ import { drawGuideExamples } from "./guide.js";
 import { requireAgreement, showAgreement } from "./agreement.js";
 
 import { MobileTrainingController } from "./mobile-training.js";
+import { ChildTrainingController } from "./child-training.js";
 
 import { isMobileDevice } from "./device.js";
 
@@ -34,6 +35,7 @@ let records;
 let training;
 let visualTest;
 let mobileTraining;
+let childTraining;
 let currentRoute = "training";
 let routeGuardActive = false;
 
@@ -57,6 +59,9 @@ async function route() {
   }
   if (currentRoute === "mobile" && nextRoute !== "mobile" && mobileTraining.isRunning()) {
     await mobileTraining.abortSession("route_change");
+  }
+  if (currentRoute === "mobile" && nextRoute !== "mobile" && childTraining.isRunning()) {
+    await childTraining.abort("route_change", true);
   }
   if (currentRoute === "testing" && nextRoute !== "testing" && visualTest.isRunning()) {
     const leave = window.confirm("视觉测试尚未完成。离开后已完成阶段会保留，确定离开吗？");
@@ -97,7 +102,7 @@ function bindAppEvents() {
   });
   window.addEventListener("hashchange", route);
   window.addEventListener("beforeunload", (event) => {
-    if (!training.isRunning() && !mobileTraining.isRunning() && !visualTest.isRunning()) return;
+    if (!training.isRunning() && !mobileTraining.isRunning() && !childTraining.isRunning() && !visualTest.isRunning()) return;
     event.preventDefault();
     event.returnValue = "";
   });
@@ -112,6 +117,7 @@ async function initialize() {
   records = new RecordsController({ onToast: toast });
   training = new TrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
   mobileTraining = new MobileTrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
+  childTraining = new ChildTrainingController({ onToast: toast, onSessionChanged: () => records.invalidate() });
   visualTest = new VisualTestController({ onToast: toast, onTestChanged: () => records.invalidate() });
   bindAppEvents();
   if (!agreement.persisted) toast("浏览器未能保存同意记录，本次可正常使用，下次打开时需要重新确认。");

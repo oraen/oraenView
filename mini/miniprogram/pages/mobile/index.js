@@ -13,6 +13,7 @@ Page({
     const completed = storage.getData().sessions.find((item) => item.status === "completed");
     this.setData({ lastRecord: completed ? { mode: completed.modeLabel, accuracy: Math.round((completed.accuracy || 0) * 100), trials: completed.completedTrials || 0 } : null });
   },
+  startChildTraining() { wx.navigateTo({ url: "/pages/child/index" }); },
   startTraining(event) { wx.navigateTo({ url: "/pages/training/index?mode=" + event.currentTarget.dataset.mode }); },
   onShareAppMessage() { return { title: "开源视觉 · 掌上视觉训练", path: "/pages/mobile/index" }; },
   onShareTimeline() { return { title: "开源视觉 · 掌上视觉训练", query: "" }; },

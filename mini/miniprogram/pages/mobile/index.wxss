@@ -4,7 +4,7 @@
 .mode-title { color: #111c44; font-size: 31rpx; font-weight: 750; }
 .mode-caption { margin-top: 8rpx; color: #778297; font-size: 24rpx; }
 .arrow { color: #3158df; font-size: 38rpx; }
-.pro-site { margin: 12rpx 0 34rpx; text-align: center; color: #9aa3b1; font-size: 23rpx; }
+.pro-site { margin: 32rpx 0 34rpx; text-align: center; color: #737d8d; font-size: 32rpx; line-height: 1.6; }
 .last-card { padding: 28rpx; }
 .last-heading { font-size: 29rpx; font-weight: 750; }
 .last-values { display: flex; margin-top: 24rpx; }
