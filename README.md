@@ -1,6 +1,4 @@
 
-![慢手的兔子头像](public/images/author-manshou.jpg)
-小红书：慢手（ID：49624205605）。
 网站：https://view.oraen.com/
 
 
@@ -76,7 +74,7 @@ npm start
 
 在发现市场上治疗弱视的软件都需要上万块钱之后，为了治疗弱视，他决定...
 
-联系作者： [oraen1998@gmail.com](mailto:oraen1998@gmail.com)，小红书：慢手（ID：49624205605）。
+联系作者： [oraen1998@gmail.com](mailto:oraen1998@gmail.com)。
 
 <!-- ABOUT_PROJECT_END -->
 
